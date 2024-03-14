@@ -22,4 +22,3 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
-# https-github.com-couchbase-examples-ruby-on-rails-quickstart
