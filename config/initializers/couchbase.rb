@@ -9,10 +9,10 @@ DB_BUCKET_NAME = ENV.fetch('DB_BUCKET_NAME', 'travel-sample')
 options = Couchbase::Cluster::ClusterOptions.new
 options.authenticate(DB_USERNAME, DB_PASSWORD)
 
-cluster = Couchbase::Cluster.connect(DB_HOST, options)
+COUCHBASE_CLUSTER = Couchbase::Cluster.connect(DB_HOST, options)
 
 # Open the bucket
-bucket = cluster.bucket(DB_BUCKET_NAME)
+bucket = COUCHBASE_CLUSTER.bucket(DB_BUCKET_NAME)
 
 # Open the default collection
 default_collection = bucket.default_collection

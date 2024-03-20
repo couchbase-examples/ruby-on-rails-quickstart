@@ -1,3 +1,5 @@
+require '../config/initializers/couchbase.rb'
+
 class Airline
   attr_accessor :id
   attr_accessor :name
@@ -22,22 +24,23 @@ class Airline
     nil
   end
 
-  def self.all(country = nil)
-    query = country ? "SELECT * FROM #{AIRLINE_COLLECTION.name} WHERE country = $country" : "SELECT * FROM #{AIRLINE_COLLECTION.name}"
-    params = country ? { "$country" => country } : {}
-    result = AIRLINE_COLLECTION.query(query, params)
+  def self.all(country = nil, limit = 10, offset = 0)
+    query = country ? "SELECT * FROM #{AIRLINE_COLLECTION.name} WHERE country = $country LIMIT $limit OFFSET $offset" : "SELECT * FROM #{AIRLINE_COLLECTION.name} LIMIT $limit OFFSET $offset"
+    params = country ? { "$country" => country, "$limit" => limit.to_i, "$offset" => offset.to_i } : { "$limit" => limit.to_i, "$offset" => offset.to_i }
+    result = cluster.query(query, params)
     result.rows.map { |row| new(row) }
   end
 
-  def self.to_airport(destination_airport_code)
+  def self.to_airport(destination_airport_code, limit = 10, offset = 0)
     query = "
       SELECT air.*
       FROM #{ROUTE_COLLECTION.name} AS r
       JOIN #{AIRLINE_COLLECTION.name} AS air ON r.airlineId = air.id
       WHERE r.destinationAirport = $airport
+      LIMIT $limit OFFSET $offset
     "
-    params = { "$airport" => destination_airport_code }
-    result = ROUTE_COLLECTION.query(query, params)
+    params = { "$airport" => destination_airport_code, "$limit" => limit.to_i, "$offset" => offset.to_i }
+    result = COUCHBASE_CLUSTER.query(query, params)
     result.rows.map { |row| new(row) }
   end
 

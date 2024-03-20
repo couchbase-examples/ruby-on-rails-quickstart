@@ -45,8 +45,11 @@ module Api
 
       # GET /api/v1/airlines/list
       def index
-        country = params[:country]
-        @airlines = Airline.all(country)
+        country = params[:country] || ''
+        limit = params[:limit] || 10
+        offset = params[:offset] || 0
+
+        @airlines = Airline.all(country, limit, offset)
 
         if @airlines.empty?
           render json: { message: 'No airlines found' }, status: :ok
@@ -57,8 +60,11 @@ module Api
 
       # GET /api/v1/airlines/to-airport
       def to_airport
-        destination_airport_code = params[:destination_airport_code]
-        @airlines = Airline.to_airport(destination_airport_code)
+        destination_airport_code = params[:destinationAirportCode] || ''
+        limit = params[:limit] || 10
+        offset = params[:offset] || 0
+
+        @airlines = Airline.to_airport(destination_airport_code, limit, offset)
         render json: @airlines, status: :ok
       end
 
