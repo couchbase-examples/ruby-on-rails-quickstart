@@ -18,6 +18,9 @@ Rails.application.routes.draw do
       get 'airlines/list', to: 'airlines#index'
       get 'airlines/to-airport', to: 'airlines#to_airport'
       resources :airlines, only: [:show, :create, :update, :destroy], param: :id
+      get 'airports/direct-connections', to: 'airports#direct_connections'
+      resources :airports, only: [:show, :create, :update, :destroy], param: :id
+      resources :routes, only: [:show, :create, :update, :destroy], param: :id
     end
   end
 end

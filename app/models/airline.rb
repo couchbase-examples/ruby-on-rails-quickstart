@@ -1,5 +1,3 @@
-require '../config/initializers/couchbase.rb'
-
 class Airline
   attr_accessor :id
   attr_accessor :name
@@ -27,16 +25,26 @@ class Airline
   def self.all(country = nil, limit = 10, offset = 0)
     query = country ? "SELECT * FROM #{AIRLINE_COLLECTION.name} WHERE country = $country LIMIT $limit OFFSET $offset" : "SELECT * FROM #{AIRLINE_COLLECTION.name} LIMIT $limit OFFSET $offset"
     params = country ? { "$country" => country, "$limit" => limit.to_i, "$offset" => offset.to_i } : { "$limit" => limit.to_i, "$offset" => offset.to_i }
-    result = cluster.query(query, params)
+    result = COUCHBASE_CLUSTER.query(query, params)
     result.rows.map { |row| new(row) }
   end
 
   def self.to_airport(destination_airport_code, limit = 10, offset = 0)
     query = "
-      SELECT air.*
-      FROM #{ROUTE_COLLECTION.name} AS r
-      JOIN #{AIRLINE_COLLECTION.name} AS air ON r.airlineId = air.id
-      WHERE r.destinationAirport = $airport
+      SELECT air.callsign,
+             air.country,
+             air.iata,
+             air.icao,
+             air.id,
+             air.name,
+             air.type
+      FROM (SELECT DISTINCT META(airline).id AS airlineId
+            FROM route
+            JOIN airline
+            ON route.airlineid = META(airline).id
+            WHERE route.destinationairport = $airport) AS subquery
+      JOIN airline AS air
+      ON META(air).id = subquery.airlineId
       LIMIT $limit OFFSET $offset
     "
     params = { "$airport" => destination_airport_code, "$limit" => limit.to_i, "$offset" => offset.to_i }
@@ -47,7 +55,7 @@ class Airline
   def self.create(attributes)
     id = AIRLINE_COLLECTION.insert(attributes)
     new(attributes.merge(id: id))
-  rescue Couchbase::Error::DocumentExists
+  rescue Couchbase::Error::DocumentExistsError
     nil
   end
 

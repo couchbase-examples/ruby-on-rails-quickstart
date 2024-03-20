@@ -1,4 +1,3 @@
-# spec/models/airline_spec.rb
 require 'rails_helper'
 
 RSpec.describe Airline, type: :model do
