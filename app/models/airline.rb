@@ -23,32 +23,40 @@ class Airline
   end
 
   def self.all(country = nil, limit = 10, offset = 0)
-    query = country ? "SELECT * FROM #{AIRLINE_COLLECTION.name} WHERE country = $country LIMIT $limit OFFSET $offset" : "SELECT * FROM #{AIRLINE_COLLECTION.name} LIMIT $limit OFFSET $offset"
-    params = country ? { "$country" => country, "$limit" => limit.to_i, "$offset" => offset.to_i } : { "$limit" => limit.to_i, "$offset" => offset.to_i }
-    result = COUCHBASE_CLUSTER.query(query, params)
-    result.rows.map { |row| new(row) }
+    bucket_name = 'travel-sample'
+    scope_name = 'inventory'
+    collection_name = 'airline'
+
+    query = country ? "SELECT * FROM `#{bucket_name}`.`#{scope_name}`.`#{collection_name}` WHERE country = $country LIMIT $limit OFFSET $offset" : "SELECT * FROM `#{bucket_name}`.`#{scope_name}`.`#{collection_name}` LIMIT $limit OFFSET $offset"
+    options = Couchbase::Cluster::QueryOptions.new
+    options.named_parameters(country ? { "country" => country, "limit" => limit.to_i, "offset" => offset.to_i } : { "limit" => limit.to_i, "offset" => offset.to_i })
+
+    result = COUCHBASE_CLUSTER.query(query, options)
+    result.rows.map { |row| new(row.fetch('airline', {})) }.to_a
   end
 
   def self.to_airport(destination_airport_code, limit = 10, offset = 0)
+    bucket_name = 'travel-sample'
+    scope_name = 'inventory'
+    route_collection_name = 'route'
+    airline_collection_name = 'airline'
+
     query = "
-      SELECT air.callsign,
-             air.country,
-             air.iata,
-             air.icao,
-             air.id,
-             air.name,
-             air.type
-      FROM (SELECT DISTINCT META(airline).id AS airlineId
-            FROM route
-            JOIN airline
+      SELECT air.callsign, air.country, air.iata, air.icao, air.id, air.name
+      FROM (SELECT DISTINCT META(#{airline_collection_name}).id AS airlineId
+            FROM `#{bucket_name}`.`#{scope_name}`.`#{route_collection_name}` AS route
+            JOIN `#{bucket_name}`.`#{scope_name}`.`#{airline_collection_name}` AS airline
             ON route.airlineid = META(airline).id
             WHERE route.destinationairport = $airport) AS subquery
-      JOIN airline AS air
+      JOIN `#{bucket_name}`.`#{scope_name}`.`#{airline_collection_name}` AS air
       ON META(air).id = subquery.airlineId
       LIMIT $limit OFFSET $offset
     "
-    params = { "$airport" => destination_airport_code, "$limit" => limit.to_i, "$offset" => offset.to_i }
-    result = COUCHBASE_CLUSTER.query(query, params)
+
+    options = Couchbase::Cluster::QueryOptions.new
+    options.named_parameters({ "airport" => destination_airport_code, "limit" => limit.to_i, "offset" => offset.to_i })
+
+    result = COUCHBASE_CLUSTER.query(query, options)
     result.rows.map { |row| new(row) }
   end
 
