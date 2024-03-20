@@ -50,15 +50,23 @@ class Airport
   end
 
   def self.direct_connections(destination_airport_code, limit = 10, offset = 0)
+    bucket_name = 'travel-sample'
+    scope_name = 'inventory'
+    route_collection_name = 'route'
+    airport_collection_name = 'airport'
+
     query = "
       SELECT DISTINCT route.destinationairport
-      FROM airport AS airport
-      JOIN route AS route ON route.sourceairport = airport.faa
+      FROM `#{bucket_name}`.`#{scope_name}`.`#{airport_collection_name}` AS airport
+      JOIN `#{bucket_name}`.`#{scope_name}`.`#{route_collection_name}` AS route ON route.sourceairport = airport.faa
       WHERE airport.faa = $destinationAirportCode AND route.stops = 0
       LIMIT $limit OFFSET $offset
     "
-    params = { "$destinationAirportCode" => destination_airport_code, "$limit" => limit.to_i, "$offset" => offset.to_i }
-    result = COUCHBASE_CLUSTER.query(query, params)
+
+    options = Couchbase::Cluster::QueryOptions.new
+    options.named_parameters({ "destinationAirportCode" => destination_airport_code, "limit" => limit.to_i, "offset" => offset.to_i })
+
+    result = COUCHBASE_CLUSTER.query(query, options)
     result.rows.map { |row| row['destinationairport'] }
   end
 end
