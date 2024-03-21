@@ -209,7 +209,7 @@ RSpec.describe 'Airports API', type: :request do
   end
 end
 
-describe 'Airports API', type: :request, swagger_doc: 'v1/swagger.json' do
+describe 'Airports API', type: :request  do
   path '/api/v1/airports/{id}' do
     get 'Retrieves an airport by ID' do
       tags 'Airports'

@@ -1,0 +1,602 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/v1/airlines/{id}":
+    get:
+      summary: Retrieves an airline by ID
+      tags:
+      - Airlines
+      parameters:
+      - name: id
+        in: path
+        description: ID of the airline
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: airline found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  iata:
+                    type: string
+                  icao:
+                    type: string
+                  callsign:
+                    type: string
+                  country:
+                    type: string
+                required:
+                - id
+                - name
+                - iata
+                - icao
+                - callsign
+                - country
+        '404':
+          description: airline not found
+    post:
+      summary: Creates an airline
+      tags:
+      - Airlines
+      parameters: []
+      responses:
+        '201':
+          description: airline created
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                iata:
+                  type: string
+                icao:
+                  type: string
+                callsign:
+                  type: string
+                country:
+                  type: string
+              required:
+              - id
+              - name
+              - iata
+              - icao
+              - callsign
+              - country
+    put:
+      summary: Updates an airline
+      tags:
+      - Airlines
+      parameters:
+      - name: id
+        in: path
+        description: ID of the airline
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: airline updated
+        '404':
+          description: airline not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                iata:
+                  type: string
+                icao:
+                  type: string
+                callsign:
+                  type: string
+                country:
+                  type: string
+    delete:
+      summary: Deletes an airline
+      tags:
+      - Airlines
+      parameters:
+      - name: id
+        in: path
+        description: ID of the airline
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: airline deleted
+        '404':
+          description: airline not found
+  "/api/v1/airlines/list":
+    get:
+      summary: Retrieves all airlines by country
+      tags:
+      - Airlines
+      parameters:
+      - name: country
+        in: query
+        description: Country of the airline
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Maximum number of results to return
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Number of results to skip for pagination
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: airlines found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    iata:
+                      type: string
+                    icao:
+                      type: string
+                    callsign:
+                      type: string
+                    country:
+                      type: string
+                  required:
+                  - id
+                  - name
+                  - iata
+                  - icao
+                  - callsign
+                  - country
+  "/api/v1/airlines/to-airport":
+    get:
+      summary: Retrieves airlines flying to a destination airport
+      tags:
+      - Airlines
+      parameters:
+      - name: destinationAirportCode
+        in: query
+        description: The ICAO or IATA code of the destination airport
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Maximum number of results to return
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Number of results to skip for pagination
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: airlines found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    iata:
+                      type: string
+                    icao:
+                      type: string
+                    callsign:
+                      type: string
+                    country:
+                      type: string
+                  required:
+                  - id
+                  - name
+                  - iata
+                  - icao
+                  - callsign
+                  - country
+        '400':
+          description: bad request
+  "/api/v1/airports/{id}":
+    get:
+      summary: Retrieves an airport by ID
+      tags:
+      - Airports
+      parameters:
+      - name: id
+        in: path
+        description: ID of the airport
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: airport found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  type:
+                    type: string
+                  airportname:
+                    type: string
+                  city:
+                    type: string
+                  country:
+                    type: string
+                  faa:
+                    type: string
+                  icao:
+                    type: string
+                  tz:
+                    type: string
+                  geo:
+                    type: object
+                    properties:
+                      alt:
+                        type: number
+                      lat:
+                        type: number
+                      lon:
+                        type: number
+                required:
+                - id
+                - type
+                - airportname
+                - city
+                - country
+                - faa
+                - icao
+                - tz
+                - geo
+        '404':
+          description: airport not found
+    post:
+      summary: Creates an airport
+      tags:
+      - Airports
+      parameters: []
+      responses:
+        '201':
+          description: airport created
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                type:
+                  type: string
+                airportname:
+                  type: string
+                city:
+                  type: string
+                country:
+                  type: string
+                faa:
+                  type: string
+                icao:
+                  type: string
+                tz:
+                  type: string
+                geo:
+                  type: object
+                  properties:
+                    alt:
+                      type: number
+                    lat:
+                      type: number
+                    lon:
+                      type: number
+              required:
+              - id
+              - type
+              - airportname
+              - city
+              - country
+              - faa
+              - icao
+              - tz
+              - geo
+    put:
+      summary: Updates an airport
+      tags:
+      - Airports
+      parameters:
+      - name: id
+        in: path
+        description: ID of the airport
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: airport updated
+        '404':
+          description: airport not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                airportname:
+                  type: string
+                city:
+                  type: string
+                country:
+                  type: string
+                faa:
+                  type: string
+                icao:
+                  type: string
+                tz:
+                  type: string
+                geo:
+                  type: object
+                  properties:
+                    alt:
+                      type: number
+                    lat:
+                      type: number
+                    lon:
+                      type: number
+    delete:
+      summary: Deletes an airport
+      tags:
+      - Airports
+      parameters:
+      - name: id
+        in: path
+        description: ID of the airport
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: airport deleted
+        '404':
+          description: airport not found
+  "/api/v1/airports/direct-connections":
+    get:
+      summary: Retrieves all direct connections from a target airport
+      tags:
+      - Airports
+      parameters:
+      - name: destinationAirportCode
+        in: query
+        description: FAA code of the target airport
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Maximum number of results to return
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Number of results to skip for pagination
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: direct connections found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          description: bad request
+  "/api/v1/routes/{id}":
+    get:
+      summary: Retrieves a route by ID
+      tags:
+      - Routes
+      parameters:
+      - name: id
+        in: path
+        description: ID of the route
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: route found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  type:
+                    type: string
+                  airline:
+                    type: string
+                  airlineid:
+                    type: string
+                  sourceairport:
+                    type: string
+                  destinationairport:
+                    type: string
+                  stops:
+                    type: integer
+                  equipment:
+                    type: string
+                  schedule:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        day:
+                          type: integer
+                        flight:
+                          type: string
+                        utc:
+                          type: string
+                  distance:
+                    type: number
+                required:
+                - id
+                - type
+        '404':
+          description: route not found
+    post:
+      summary: Creates a route
+      tags:
+      - Routes
+      parameters: []
+      responses:
+        '201':
+          description: route created
+        '422':
+          description: invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                type:
+                  type: string
+                airline:
+                  type: string
+                airlineid:
+                  type: string
+                sourceairport:
+                  type: string
+                destinationairport:
+                  type: string
+                stops:
+                  type: integer
+                equipment:
+                  type: string
+                schedule:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      day:
+                        type: integer
+                      flight:
+                        type: string
+                      utc:
+                        type: string
+                distance:
+                  type: number
+              required:
+              - id
+              - type
+    put:
+      summary: Updates a route
+      tags:
+      - Routes
+      parameters:
+      - name: id
+        in: path
+        description: ID of the route
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: route updated
+        '404':
+          description: route not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                airline:
+                  type: string
+                airlineid:
+                  type: string
+                sourceairport:
+                  type: string
+                destinationairport:
+                  type: string
+                stops:
+                  type: integer
+                equipment:
+                  type: string
+                schedule:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      day:
+                        type: integer
+                      flight:
+                        type: string
+                      utc:
+                        type: string
+                distance:
+                  type: number
+    delete:
+      summary: Deletes a route
+      tags:
+      - Routes
+      parameters:
+      - name: id
+        in: path
+        description: ID of the route
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: route deleted
+        '404':
+          description: route not found
+servers:
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: www.example.com

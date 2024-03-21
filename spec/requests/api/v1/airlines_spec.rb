@@ -299,7 +299,7 @@ RSpec.describe 'Airlines API', type: :request do
   end
 end
 
-describe 'Airlines API', type: :request, swagger_doc: 'v1/swagger.json' do
+describe 'Airlines API', type: :request  do
   path '/api/v1/airlines/{id}' do
     get 'Retrieves an airline by ID' do
       tags 'Airlines'

@@ -166,7 +166,7 @@ RSpec.describe 'Routes API', type: :request do
   end
 end
 
-describe 'Routes API', type: :request, swagger_doc: 'v1/swagger.json' do
+describe 'Routes API', type: :request  do
   path '/api/v1/routes/{id}' do
     get 'Retrieves a route by ID' do
       tags 'Routes'
