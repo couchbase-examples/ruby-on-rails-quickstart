@@ -12,26 +12,93 @@ RSpec.configure do |config|
   # When you run the 'rswag:specs:swaggerize' rake task, the complete Swagger will
   # be generated at the provided relative path under openapi_root
   # By default, the operations defined in spec files are added to the first
-  # document below. You can override this behavior by adding a openapi_spec tag to the
+  # document below. You can override this behavior by adding an openapi_spec tag to the
   # the root example_group in your specs, e.g. describe '...', openapi_spec: 'v2/swagger.json'
   config.openapi_specs = {
     'v1/swagger.yaml' => {
       openapi: '3.0.1',
       info: {
-        title: 'API V1',
-        version: 'v1'
+        title: 'Quickstart in Couchbase with Ruby on Rails',
+        version: 'v1.0',
+        description: "<html><body><h2>A quickstart API using Ruby on Rails with Couchbase and travel-sample data</h2><p>We have a visual representation of the API documentation using Swagger which allows you to interact with the API's endpoints directly through the browser. It provides a clear view of the API including endpoints, HTTP methods, request parameters, and response objects.</p><p>Click on an individual endpoint to expand it and see detailed information. This includes the endpoint's description, possible response status codes, and the request parameters it accepts.</p><p><strong>Trying Out the API</strong></p><p>You can try out an API by clicking on the \"Try it out\" button next to the endpoints.</p><ul><li><strong>Parameters:</strong> If an endpoint requires parameters, Swagger UI provides input boxes for you to fill in. This could include path parameters, query strings, headers, or the body of a POST/PUT request.</li><li><strong>Execution:</strong> Once you've inputted all the necessary parameters, you can click the \"Execute\" button to make a live API call. Swagger UI will send the request to the API and display the response directly in the documentation. This includes the response code, response headers, and response body.</li></ul><p><strong>Models</strong></p><p>Swagger documents the structure of request and response bodies using models. These models define the expected data structure using JSON schema and are extremely helpful in understanding what data to send and expect.</p><p>For details on the API, please check the tutorial on the Couchbase Developer Portal: <a href=\"https://developer.couchbase.com/tutorial-quickstart-rubyonrails\">https://developer.couchbase.com/tutorial-quickstart-rubyonrails</a></p></body></html>"
       },
       paths: {},
       servers: [
         {
-          url: 'https://{defaultHost}',
+          url: 'http://{defaultHost}',
           variables: {
             defaultHost: {
-              default: 'www.example.com'
+              default: 'localhost:3000'
             }
           }
         }
-      ]
+      ],
+      components: {
+        schemas: {
+          Airline: {
+            type: 'object',
+            properties: {
+              id: { type: 'integer' },
+              name: { type: 'string' },
+              iata: { type: 'string' },
+              icao: { type: 'string' },
+              callsign: { type: 'string' },
+              country: { type: 'string' }
+            },
+            required: ['id', 'name', 'iata', 'icao', 'callsign', 'country']
+          },
+          Airport: {
+            type: 'object',
+            properties: {
+              id: { type: 'integer' },
+              type: { type: 'string' },
+              airportname: { type: 'string' },
+              city: { type: 'string' },
+              country: { type: 'string' },
+              faa: { type: 'string' },
+              icao: { type: 'string' },
+              tz: { type: 'string' },
+              geo: {
+                type: 'object',
+                properties: {
+                  alt: { type: 'number' },
+                  lat: { type: 'number' },
+                  lon: { type: 'number' }
+                },
+                required: ['alt', 'lat', 'lon']
+              }
+            },
+            required: ['id', 'type', 'airportname', 'city', 'country', 'faa', 'icao', 'tz', 'geo']
+          },
+          Route: {
+            type: 'object',
+            properties: {
+              id: { type: 'integer' },
+              type: { type: 'string' },
+              airline: { type: 'string' },
+              airlineid: { type: 'string' },
+              sourceairport: { type: 'string' },
+              destinationairport: { type: 'string' },
+              stops: { type: 'integer' },
+              equipment: { type: 'string' },
+              schedule: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    day: { type: 'integer' },
+                    flight: { type: 'string' },
+                    utc: { type: 'string' }
+                  },
+                  required: ['day', 'flight', 'utc']
+                }
+              },
+              distance: { type: 'number' }
+            },
+            required: ['id', 'type', 'airline', 'airlineid', 'sourceairport', 'destinationairport', 'stops', 'equipment', 'schedule', 'distance']
+          }
+        }
+      }
     }
   }
 

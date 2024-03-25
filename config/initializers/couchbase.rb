@@ -15,6 +15,7 @@ COUCHBASE_CLUSTER = Couchbase::Cluster.connect(DB_HOST, options)
 bucket = COUCHBASE_CLUSTER.bucket(DB_BUCKET_NAME)
 
 # Open the default collection
+
 default_collection = bucket.default_collection
 
 # Create scope and collections if they don't exist
@@ -25,12 +26,10 @@ rescue Couchbase::Error::ScopeNotFoundError
   scope = bucket.scope('inventory')
 end
 
-['airline', 'airport', 'route'].each do |collection_name|
-  begin
-    scope.collection(collection_name)
-  rescue Couchbase::Error::CollectionNotFoundError
-    scope.create_collection(collection_name)
-  end
+%w[airline airport route].each do |collection_name|
+  scope.collection(collection_name)
+rescue Couchbase::Error::CollectionNotFoundError
+  scope.create_collection(collection_name)
 end
 
 AIRLINE_COLLECTION = scope.collection('airline')
