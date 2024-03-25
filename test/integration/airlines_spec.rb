@@ -10,7 +10,7 @@ RSpec.describe 'Airlines API', type: :request do
         'iata' => 'Q5',
         'icao' => 'MLA',
         'callsign' => 'MILE-AIR',
-        'country' => 'United States2'
+        'country' => 'United States'
       }
     end
 
@@ -20,53 +20,53 @@ RSpec.describe 'Airlines API', type: :request do
 
     it 'returns the airline' do
       get "/api/v1/airlines/#{airline_id}"
-      puts response.body
+ 
       expect(response).to have_http_status(:ok)
       expect(response.content_type).to eq('application/json; charset=utf-8')
       expect(JSON.parse(response.body)).to eq(expected_airline)
     end
   end
 
-  # describe 'POST /api/v1/airlines/{id}' do
-  #   let(:airline_id) { 'airline_post' }
-  #   let(:airline_params) do
-  #     {
-  #       'id' => 11,
-  #       'name' => '40-Mile Air',
-  #       'iata' => 'Q5',
-  #       'icao' => 'MLA',
-  #       'callsign' => 'MILE-AIR',
-  #       'country' => 'United States'
-  #     }
-  #   end
+  describe 'POST /api/v1/airlines/{id}' do
+    let(:airline_id) { 'airline_post' }
+    let(:airline_params) do
+      {
+        'id' => 11,
+        'name' => '40-Mile Air',
+        'iata' => 'Q5',
+        'icao' => 'MLA',
+        'callsign' => 'MILE-AIR',
+        'country' => 'United States'
+      }
+    end
 
-  #   context 'when the airline is created successfully' do
-  #     before do
-  #       allow(AIRLINE_COLLECTION).to receive(:insert).with(airline_id, airline_params).and_return(true)
-  #     end
+    context 'when the airline is created successfully' do
+      # before do
+      #   allow(AIRLINE_COLLECTION).to receive(:insert).with(airline_id, airline_params).and_return(true)
+      # end
 
-  #     it 'returns the created airline' do
-  #       post "/api/v1/airlines/#{airline_id}", params: { airline: airline_params }
+      it 'returns the created airline' do
+        post "/api/v1/airlines/#{airline_id}", params: { airline: airline_params }
 
-  #       expect(response).to have_http_status(:created)
-  #       expect(response.content_type).to eq('application/json; charset=utf-8')
-  #       expect(JSON.parse(response.body)).to include(airline_params.merge('id' => airline_id))
-  #     end
-  #   end
+        expect(response).to have_http_status(:created)
+        expect(response.content_type).to eq('application/json; charset=utf-8')
+        expect(JSON.parse(response.body)).to include(airline_params.merge('id' => airline_id))
+      end
+    end
 
-  #   context 'when the airline already exists' do
-  #     before do
-  #       allow(AIRLINE_COLLECTION).to receive(:insert).with(airline_id, airline_params).and_raise(Couchbase::Error::DocumentExists)
-  #     end
+    context 'when the airline already exists' do
+      # before do
+      #   allow(AIRLINE_COLLECTION).to receive(:insert).with(airline_id, airline_params).and_raise(Couchbase::Error::DocumentExists)
+      # end
 
-  #     it 'returns a conflict error' do
-  #       post "/api/v1/airlines/#{airline_id}", params: { airline: airline_params }
+      it 'returns a conflict error' do
+        post "/api/v1/airlines/#{airline_id}", params: { airline: airline_params }
 
-  #       expect(response).to have_http_status(:unprocessable_entity)
-  #       expect(JSON.parse(response.body)).to eq({ 'error' => 'Airline already exists' })
-  #     end
-  #   end
-  # end
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(JSON.parse(response.body)).to eq({ 'error' => 'Airline already exists' })
+      end
+    end
+  end
 
   # describe 'PUT /api/v1/airlines/{id}' do
   #   let(:airline_id) { '11' }

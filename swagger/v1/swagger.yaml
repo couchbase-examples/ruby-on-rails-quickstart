@@ -68,7 +68,13 @@ paths:
       summary: Creates an airline
       tags:
       - Airlines
-      parameters: []
+      parameters:
+      - name: id
+        in: path
+        description: ID of the airline
+        required: true
+        schema:
+          type: string
       responses:
         '201':
           description: airline created
@@ -310,7 +316,13 @@ paths:
       summary: Creates an airport
       tags:
       - Airports
-      parameters: []
+      parameters:
+      - name: id
+        in: path
+        description: ID of the airport
+        required: true
+        schema:
+          type: string
       responses:
         '201':
           description: airport created
@@ -507,7 +519,13 @@ paths:
       summary: Creates a route
       tags:
       - Routes
-      parameters: []
+      parameters:
+      - name: id
+        in: path
+        description: ID of the route
+        required: true
+        schema:
+          type: string
       responses:
         '201':
           description: route created

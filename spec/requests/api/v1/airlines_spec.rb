@@ -32,6 +32,7 @@ describe 'Airlines API', type: :request  do
     post 'Creates an airline' do
       tags 'Airlines'
       consumes 'application/json'
+      parameter name: :id, in: :path, type: :string, description: 'ID of the airline'
       parameter name: :airline, in: :body, schema: {
         type: :object,
         properties: {
