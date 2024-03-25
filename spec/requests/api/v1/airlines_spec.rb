@@ -51,6 +51,11 @@ describe 'Airlines API', type: :request  do
         run_test!
       end
 
+      response '409', 'airline already exists' do
+        let(:airline) { { id: 1, name: 'Foo Airlines', iata: 'FA', icao: 'FOO', callsign: 'FOO', country: 'US' } }
+        run_test!
+      end
+
       response '422', 'invalid request' do
         let(:airline) { { name: 'Foo Airlines' } }
         run_test!

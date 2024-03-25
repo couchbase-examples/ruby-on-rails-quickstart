@@ -87,6 +87,28 @@ describe 'Airports API', type: :request  do
         run_test!
       end
 
+      # 409
+      response '409', 'airport already exists' do
+        let(:airport) do
+          {
+            id: 999,
+            type: 'test-airport',
+            airportname: 'Test Airport',
+            city: 'Test City',
+            country: 'Test Country',
+            faa: '',
+            icao: 'Test LFAG',
+            tz: 'Test Europe/Paris',
+            geo: {
+              lat: 49.868547,
+              lon: 3.029578,
+              alt: 295.0
+            }
+          }
+        end
+        run_test!
+      end
+
       response '422', 'invalid request' do
         let(:airport) { { airportname: 'Test Airport' } }
         run_test!

@@ -28,21 +28,43 @@ class Airport
     nil
   end
 
-  def self.create(attributes)
-    id = AIRPORT_COLLECTION.insert(attributes)
-    new(attributes.merge(id: id))
-  rescue Couchbase::Error::DocumentExistsError
-    nil
+  def self.create(id,attributes)
+    formatted_attributes = {
+      'id' => attributes['id'],
+      'type' => 'airport',
+      'airportname' => attributes['airportname'],
+      'city' => attributes['city'],
+      'country' => attributes['country'],
+      'faa' => attributes['faa'],
+      'icao' => attributes['icao'],
+      'tz' => attributes['tz'],
+      'geo' => attributes['geo']
+    }
+    AIRPORT_COLLECTION.insert(id, formatted_attributes)
+    new(formatted_attributes)
+  rescue Couchbase::Error::DocumentExists
+    raise Couchbase::Error::DocumentExists, "Airport with ID #{id} already exists"
   end
 
-  def update(attributes)
-    AIRPORT_COLLECTION.upsert(id, attributes)
-    self.class.new(attributes)
+  def update(id,attributes)
+    formatted_attributes = {
+      'id' => attributes['id'],
+      'type' => 'airport',
+      'airportname' => attributes['airportname'],
+      'city' => attributes['city'],
+      'country' => attributes['country'],
+      'faa' => attributes['faa'],
+      'icao' => attributes['icao'],
+      'tz' => attributes['tz'],
+      'geo' => attributes['geo']
+    }
+    AIRPORT_COLLECTION.upsert(id, formatted_attributes)
+    self.class.new(formatted_attributes)
   rescue Couchbase::Error::DocumentNotFound
-    nil
+    raise Couchbase::Error::DocumentNotFound, "Airport with ID #{id} not found"
   end
 
-  def destroy
+  def destroy(id)
     AIRPORT_COLLECTION.remove(id)
     true
   rescue Couchbase::Error::DocumentNotFound

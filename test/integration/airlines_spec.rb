@@ -62,54 +62,54 @@ RSpec.describe 'Airlines API', type: :request do
       it 'returns a conflict error' do
         post "/api/v1/airlines/#{airline_id}", params: { airline: airline_params }
 
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(JSON.parse(response.body)).to eq({ 'error' => 'Airline already exists' })
+        expect(response).to have_http_status(:conflict)
+        expect(JSON.parse(response.body)).to eq({ 'error' => "Airline with ID #{airline_id} already exists" })
       end
     end
   end
 
-  # describe 'PUT /api/v1/airlines/{id}' do
-  #   let(:airline_id) { '11' }
-  #   let(:airline_params) do
-  #     {
-  #       'name' => '40-Mile Air',
-  #       'iata' => 'U5',
-  #       'icao' => 'UPD',
-  #       'callsign' => 'MILE-AIR',
-  #       'country' => 'Updated States'
-  #     }
-  #   end
+  describe 'PUT /api/v1/airlines/{id}' do
+    let(:airline_id) { '11' }
+    let(:airline_params) do
+      {
+        'name' => '40-Mile Air',
+        'iata' => 'U5',
+        'icao' => 'UPD',
+        'callsign' => 'MILE-AIR',
+        'country' => 'Updated States'
+      }
+    end
 
-  #   context 'when the airline is updated successfully' do
-  #     let(:updated_airline) { airline_params.merge('id' => airline_id.to_i) }
+    context 'when the airline is updated successfully' do
+      let(:updated_airline) { airline_params.merge('id' => airline_id.to_i) }
 
-  #     before do
-  #       allow(AIRLINE_COLLECTION).to receive(:upsert).with(airline_id, updated_airline)
-  #       allow(Airline).to receive(:find).with(airline_id).and_return(Airline.new(updated_airline))
-  #     end
+      # before do
+      #   allow(AIRLINE_COLLECTION).to receive(:upsert).with(airline_id, updated_airline)
+      #   allow(Airline).to receive(:find).with(airline_id).and_return(Airline.new(updated_airline))
+      # end
 
-  #     it 'returns the updated airline' do
-  #       put "/api/v1/airlines/#{airline_id}", params: { airline: airline_params }
+      it 'returns the updated airline' do
+        put "/api/v1/airlines/#{airline_id}", params: { airline: airline_params }
 
-  #       expect(response).to have_http_status(:ok)
-  #       expect(response.content_type).to eq('application/json; charset=utf-8')
-  #       expect(JSON.parse(response.body)).to include(updated_airline)
-  #     end
-  #   end
+        expect(response).to have_http_status(:ok)
+        expect(response.content_type).to eq('application/json; charset=utf-8')
+        expect(JSON.parse(response.body)).to include(airline_params)
+      end
+    end
 
-  #   context 'when the airline does not exist' do
-  #     before do
-  #       allow(Airline).to receive(:find).with(airline_id).and_return(nil)
-  #     end
+    context 'when the airline does not exist' do
+      # before do
+      #   allow(Airline).to receive(:find).with(airline_id).and_return(nil)
+      # end
 
-  #     it 'returns a not found error' do
-  #       put "/api/v1/airlines/#{airline_id}", params: { airline: airline_params }
-
-  #       expect(response).to have_http_status(:not_found)
-  #       expect(JSON.parse(response.body)).to eq({ 'error' => 'Airline not found' })
-  #     end
-  #   end
-  # end
+      it 'returns a not found error' do
+        put "/api/v1/airlines/invalid_id", params: { airline: airline_params }
+    
+        expect(response).to have_http_status(:not_found)
+        expect(JSON.parse(response.body)).to eq({ 'error' => 'Airline with ID invalid_id not found' })
+      end
+    end
+  end
 
   # describe 'DELETE /api/v1/airlines/{id}' do
   #   let(:airline_id) { 'airline_delete' }

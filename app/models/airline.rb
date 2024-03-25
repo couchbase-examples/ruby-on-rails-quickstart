@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Airline
   attr_accessor :id
   attr_accessor :name
@@ -60,21 +61,39 @@ class Airline
     result.rows.map { |row| new(row) }
   end
 
-  def self.create(attributes)
-    id = AIRLINE_COLLECTION.insert(attributes)
-    new(attributes.merge(id: id))
-  rescue Couchbase::Error::DocumentExistsError
-    nil
+  def self.create(id,attributes)
+    formatted_attributes = {
+      'id' => attributes['id'],
+      'type' => 'airline',
+      'name' => attributes['name'],
+      'iata' => attributes['iata'],
+      'icao' => attributes['icao'],
+      'callsign' => attributes['callsign'],
+      'country' => attributes['country']
+    }
+    AIRLINE_COLLECTION.insert(id, formatted_attributes)
+    new(formatted_attributes)
+  rescue Couchbase::Error::DocumentExists
+    raise Couchbase::Error::DocumentExists, "Airline with ID #{id} already exists"
   end
 
-  def update(attributes)
-    AIRLINE_COLLECTION.upsert(id, attributes)
-    self.class.new(attributes)
+  def update(id,attributes)
+    formatted_attributes = {
+      'id' => attributes['id'],
+      'type' => 'airline',
+      'name' => attributes['name'],
+      'iata' => attributes['iata'],
+      'icao' => attributes['icao'],
+      'callsign' => attributes['callsign'],
+      'country' => attributes['country']
+    }
+    AIRLINE_COLLECTION.upsert(id, formatted_attributes)
+    self.class.new(formatted_attributes)
   rescue Couchbase::Error::DocumentNotFound
-    nil
+    raise Couchbase::Error::DocumentNotFound, "Airline with ID #{id} not found"
   end
 
-  def destroy
+  def destroy(id)
     AIRLINE_COLLECTION.remove(id)
     true
   rescue Couchbase::Error::DocumentNotFound

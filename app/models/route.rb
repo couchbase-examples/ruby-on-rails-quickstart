@@ -30,21 +30,45 @@ class Route
     nil
   end
 
-  def self.create(attributes)
-    id = ROUTE_COLLECTION.insert(attributes)
-    new(attributes.merge(id: id))
-  rescue Couchbase::Error::DocumentExistsError
-    nil
+  def self.create(id,attributes)
+    formatted_attributes = {
+      'id' => attributes['id'],
+      'type' => 'route',
+      'airline' => attributes['airline'],
+      'airlineid' => attributes['airlineid'],
+      'sourceairport' => attributes['sourceairport'],
+      'destinationairport' => attributes['destinationairport'],
+      'stops' => attributes['stops'],
+      'equipment' => attributes['equipment'],
+      'schedule' => attributes['schedule'],
+      'distance' => attributes['distance']
+    }
+    ROUTE_COLLECTION.insert(id, formatted_attributes)
+    new(formatted_attributes)
+  rescue Couchbase::Error::DocumentExists
+    raise Couchbase::Error::DocumentExists, "Route with ID #{id} already exists"
   end
 
-  def update(attributes)
-    ROUTE_COLLECTION.upsert(id, attributes)
-    self.class.new(attributes)
+  def update(id,attributes)
+    formatted_attributes = {
+      'id' => attributes['id'],
+      'type' => 'route',
+      'airline' => attributes['airline'],
+      'airlineid' => attributes['airlineid'],
+      'sourceairport' => attributes['sourceairport'],
+      'destinationairport' => attributes['destinationairport'],
+      'stops' => attributes['stops'],
+      'equipment' => attributes['equipment'],
+      'schedule' => attributes['schedule'],
+      'distance' => attributes['distance']
+    }
+    ROUTE_COLLECTION.upsert(id, formatted_attributes)
+    self.class.new(formatted_attributes)
   rescue Couchbase::Error::DocumentNotFound
-    nil
+    raise Couchbase::Error::DocumentNotFound, "Route with ID #{id} not found"
   end
 
-  def destroy
+  def destroy(id)
     ROUTE_COLLECTION.remove(id)
     true
   rescue Couchbase::Error::DocumentNotFound

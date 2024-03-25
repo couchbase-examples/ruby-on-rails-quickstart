@@ -78,6 +78,8 @@ paths:
       responses:
         '201':
           description: airline created
+        '409':
+          description: airline already exists
         '422':
           description: invalid request
       requestBody:
@@ -326,6 +328,8 @@ paths:
       responses:
         '201':
           description: airport created
+        '409':
+          description: airport already exists
         '422':
           description: invalid request
       requestBody:
@@ -529,6 +533,8 @@ paths:
       responses:
         '201':
           description: route created
+        '409':
+          description: route already exists
         '422':
           description: invalid request
       requestBody:

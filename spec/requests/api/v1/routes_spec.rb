@@ -95,6 +95,27 @@ describe 'Routes API', type: :request  do
         run_test!
       end
 
+      response '409', 'route already exists' do
+        let(:route) do
+          {
+            id: 10001,
+            type: 'route',
+            airline: 'AF',
+            airlineid: 'airline_137',
+            sourceairport: 'TLV',
+            destinationairport: 'MRS',
+            stops: 0,
+            equipment: '320',
+            schedule: [
+              { day: 0, utc: '10:13:00', flight: 'AF198' },
+              { day: 0, utc: '19:14:00', flight: 'AF547' }
+            ],
+            distance: 2881.617376098415
+          }
+        end
+        run_test!
+      end
+
       response '422', 'invalid request' do
         let(:route) { { id: 10001 } }
         run_test!
