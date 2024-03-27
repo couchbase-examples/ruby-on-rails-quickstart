@@ -45,7 +45,7 @@ RSpec.configure do |config|
               callsign: { type: 'string' },
               country: { type: 'string' }
             },
-            required: ['id', 'name', 'iata', 'icao', 'callsign', 'country']
+            required: %w[id name iata icao callsign country]
           },
           Airport: {
             type: 'object',
@@ -65,10 +65,10 @@ RSpec.configure do |config|
                   lat: { type: 'number' },
                   lon: { type: 'number' }
                 },
-                required: ['alt', 'lat', 'lon']
+                required: %w[alt lat lon]
               }
             },
-            required: ['id', 'type', 'airportname', 'city', 'country', 'faa', 'icao', 'tz', 'geo']
+            required: %w[id type airportname city country faa icao tz geo]
           },
           Route: {
             type: 'object',
@@ -90,12 +90,13 @@ RSpec.configure do |config|
                     flight: { type: 'string' },
                     utc: { type: 'string' }
                   },
-                  required: ['day', 'flight', 'utc']
+                  required: %w[day flight utc]
                 }
               },
               distance: { type: 'number' }
             },
-            required: ['id', 'type', 'airline', 'airlineid', 'sourceairport', 'destinationairport', 'stops', 'equipment', 'schedule', 'distance']
+            required: %w[id type airline airlineid sourceairport destinationairport stops
+                         equipment schedule distance]
           }
         }
       }

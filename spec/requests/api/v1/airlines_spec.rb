@@ -9,14 +9,14 @@ describe 'Airlines API', type: :request do
 
       response '200', 'airline found' do
         schema type: :object,
-          properties: {
-            name: { type: :string },
-            iata: { type: :string },
-            icao: { type: :string },
-            callsign: { type: :string },
-            country: { type: :string }
-          },
-          required: ['name', 'iata', 'icao', 'callsign', 'country']
+               properties: {
+                 name: { type: :string },
+                 iata: { type: :string },
+                 icao: { type: :string },
+                 callsign: { type: :string },
+                 country: { type: :string }
+               },
+               required: %w[name iata icao callsign country]
 
         let(:id) { 'airline_10' }
         run_test!
@@ -41,7 +41,7 @@ describe 'Airlines API', type: :request do
           callsign: { type: :string },
           country: { type: :string }
         },
-        required: ['name', 'iata', 'icao', 'callsign', 'country']
+        required: %w[name iata icao callsign country]
       }
 
       response '201', 'airline created' do
@@ -58,7 +58,6 @@ describe 'Airlines API', type: :request do
         let(:airline) { { name: 'Foo Airlines', iata: 'FA', icao: 'FOO', callsign: 'FOO', country: 'US' } }
         run_test!
       end
-
     end
 
     put 'Updates an airline' do
@@ -115,17 +114,17 @@ describe 'Airlines API', type: :request do
 
       response '200', 'airlines found' do
         schema type: :array,
-          items: {
-            type: :object,
-            properties: {
-              name: { type: :string },
-              iata: { type: :string },
-              icao: { type: :string },
-              callsign: { type: :string },
-              country: { type: :string }
-            },
-            required: ['name', 'iata', 'icao', 'callsign', 'country']
-          }
+               items: {
+                 type: :object,
+                 properties: {
+                   name: { type: :string },
+                   iata: { type: :string },
+                   icao: { type: :string },
+                   callsign: { type: :string },
+                   country: { type: :string }
+                 },
+                 required: %w[name iata icao callsign country]
+               }
 
         let(:country) { 'United States' }
         let(:limit) { 10 }
@@ -139,23 +138,24 @@ describe 'Airlines API', type: :request do
     get 'Retrieves airlines flying to a destination airport' do
       tags 'Airlines'
       produces 'application/json'
-      parameter name: :destinationAirportCode, in: :query, type: :string, description: 'The ICAO or IATA code of the destination airport'
+      parameter name: :destinationAirportCode, in: :query, type: :string,
+                description: 'The ICAO or IATA code of the destination airport'
       parameter name: :limit, in: :query, type: :integer, description: 'Maximum number of results to return'
       parameter name: :offset, in: :query, type: :integer, description: 'Number of results to skip for pagination'
 
       response '200', 'airlines found' do
         schema type: :array,
-          items: {
-            type: :object,
-            properties: {
-              name: { type: :string },
-              iata: { type: :string },
-              icao: { type: :string },
-              callsign: { type: :string },
-              country: { type: :string }
-            },
-            required: ['name', 'iata', 'icao', 'callsign', 'country']
-          }
+               items: {
+                 type: :object,
+                 properties: {
+                   name: { type: :string },
+                   iata: { type: :string },
+                   icao: { type: :string },
+                   callsign: { type: :string },
+                   country: { type: :string }
+                 },
+                 required: %w[name iata icao callsign country]
+               }
 
         let(:destinationAirportCode) { 'LAX' }
         let(:limit) { 10 }

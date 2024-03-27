@@ -1,11 +1,5 @@
 class Airport
-  attr_accessor :airportname
-  attr_accessor :city
-  attr_accessor :country
-  attr_accessor :faa
-  attr_accessor :icao
-  attr_accessor :tz
-  attr_accessor :geo
+  attr_accessor :airportname, :city, :country, :faa, :icao, :tz, :geo
 
   def initialize(attributes)
     @airportname = attributes['airportname']
@@ -33,13 +27,9 @@ class Airport
     missing_fields = required_fields - attributes.keys
     extra_fields = attributes.keys - (required_fields + ['geo'])
 
-    if missing_fields.any?
-      raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}"
-    end
+    raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}" if missing_fields.any?
 
-    if extra_fields.any?
-      raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}"
-    end
+    raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}" if extra_fields.any?
 
     formatted_attributes = {
       'airportname' => attributes['airportname'],
@@ -69,13 +59,9 @@ class Airport
     missing_fields = required_fields - attributes.keys
     extra_fields = attributes.keys - (required_fields + ['geo'])
 
-    if missing_fields.any?
-      raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}"
-    end
+    raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}" if missing_fields.any?
 
-    if extra_fields.any?
-      raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}"
-    end
+    raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}" if extra_fields.any?
 
     formatted_attributes = {
       'airportname' => attributes['airportname'],
@@ -125,10 +111,10 @@ class Airport
 
     options = Couchbase::Cluster::QueryOptions.new
     options.named_parameters({
-      'destinationAirportCode' => destination_airport_code,
-      'limit' => limit.to_i,
-      'offset' => offset.to_i
-    })
+                               'destinationAirportCode' => destination_airport_code,
+                               'limit' => limit.to_i,
+                               'offset' => offset.to_i
+                             })
 
     result = COUCHBASE_CLUSTER.query(query, options)
     result.rows.map { |row| row['destinationairport'] }

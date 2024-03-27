@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-describe 'Airports API', type: :request  do
+describe 'Airports API', type: :request do
   path '/api/v1/airports/{id}' do
     get 'Retrieves an airport by ID' do
       tags 'Airports'
@@ -9,23 +9,23 @@ describe 'Airports API', type: :request  do
 
       response '200', 'airport found' do
         schema type: :object,
-          properties: {
-            airportname: { type: :string },
-            city: { type: :string },
-            country: { type: :string },
-            faa: { type: :string },
-            icao: { type: :string },
-            tz: { type: :string },
-            geo: {
-              type: :object,
-              properties: {
-                alt: { type: :number },
-                lat: { type: :number },
-                lon: { type: :number }
-              }
-            }
-          },
-          required: ['airportname', 'city', 'country', 'faa', 'icao', 'tz', 'geo']
+               properties: {
+                 airportname: { type: :string },
+                 city: { type: :string },
+                 country: { type: :string },
+                 faa: { type: :string },
+                 icao: { type: :string },
+                 tz: { type: :string },
+                 geo: {
+                   type: :object,
+                   properties: {
+                     alt: { type: :number },
+                     lat: { type: :number },
+                     lon: { type: :number }
+                   }
+                 }
+               },
+               required: %w[airportname city country faa icao tz geo]
 
         let(:id) { 'airport_1262' }
         run_test!
@@ -59,7 +59,7 @@ describe 'Airports API', type: :request  do
             }
           }
         },
-        required: ['airportname', 'city', 'country', 'faa', 'icao', 'tz', 'geo']
+        required: %w[airportname city country faa icao tz geo]
       }
 
       response '201', 'airport created' do
@@ -117,7 +117,6 @@ describe 'Airports API', type: :request  do
         end
         run_test!
       end
-
     end
 
     put 'Updates an airport' do
@@ -177,15 +176,16 @@ describe 'Airports API', type: :request  do
     get 'Retrieves all direct connections from a target airport' do
       tags 'Airports'
       produces 'application/json'
-      parameter name: :destinationAirportCode, in: :query, type: :string, description: 'FAA code of the target airport', required: true
+      parameter name: :destinationAirportCode, in: :query, type: :string,
+                description: 'FAA code of the target airport', required: true
       parameter name: :limit, in: :query, type: :integer, description: 'Maximum number of results to return'
       parameter name: :offset, in: :query, type: :integer, description: 'Number of results to skip for pagination'
 
       response '200', 'direct connections found' do
         schema type: :array,
-          items: {
-            type: :string
-          }
+               items: {
+                 type: :string
+               }
 
         let(:destinationAirportCode) { 'LAX' }
         let(:limit) { 10 }

@@ -3,8 +3,8 @@
 module Api
   module V1
     class AirlinesController < ApplicationController
-      skip_before_action :verify_authenticity_token, only: [:create, :update, :destroy]
-      before_action :set_airline, only: [:show, :update, :destroy]
+      skip_before_action :verify_authenticity_token, only: %i[create update destroy]
+      before_action :set_airline, only: %i[show update destroy]
 
       # GET /api/v1/airlines/{id}
       def show
@@ -37,14 +37,12 @@ module Api
 
       # PUT /api/v1/airlines/{id}
       def update
-        begin
-          @airline = Airline.new(airline_params).update(params[:id], airline_params)
-          render json: @airline, status: :ok
-        rescue ArgumentError => e
-          render json: { error: 'Invalid request', message: e.message }, status: :bad_request
-        rescue StandardError => e
-          render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
-        end
+        @airline = Airline.new(airline_params).update(params[:id], airline_params)
+        render json: @airline, status: :ok
+      rescue ArgumentError => e
+        render json: { error: 'Invalid request', message: e.message }, status: :bad_request
+      rescue StandardError => e
+        render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
 
       # DELETE /api/v1/airlines/{id}

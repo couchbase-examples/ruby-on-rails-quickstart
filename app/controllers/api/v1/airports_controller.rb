@@ -3,8 +3,8 @@
 module Api
   module V1
     class AirportsController < ApplicationController
-      skip_before_action :verify_authenticity_token, only: [:create, :update, :destroy]
-      before_action :set_airport, only: [:show, :update, :destroy]
+      skip_before_action :verify_authenticity_token, only: %i[create update destroy]
+      before_action :set_airport, only: %i[show update destroy]
 
       # GET /api/v1/airports/{id}
       def show
@@ -35,14 +35,12 @@ module Api
 
       # PUT /api/v1/airports/{id}
       def update
-        begin
-          @airport = Airport.new(airport_params).update(params[:id], airport_params)
-          render json: @airport, status: :ok
-        rescue ArgumentError => e
-          render json: { error: 'Invalid request', message: e.message }, status: :bad_request
-        rescue StandardError => e
-          render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
-        end
+        @airport = Airport.new(airport_params).update(params[:id], airport_params)
+        render json: @airport, status: :ok
+      rescue ArgumentError => e
+        render json: { error: 'Invalid request', message: e.message }, status: :bad_request
+      rescue StandardError => e
+        render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
 
       # DELETE /api/v1/airports/{id}
@@ -87,7 +85,7 @@ module Api
       end
 
       def airport_params
-        params.require(:airport).permit(:airportname, :city, :country, :faa, :icao, :tz, geo: [:alt, :lat, :lon])
+        params.require(:airport).permit(:airportname, :city, :country, :faa, :icao, :tz, geo: %i[alt lat lon])
       end
     end
   end

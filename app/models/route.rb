@@ -1,12 +1,5 @@
 class Route
-  attr_accessor :airline
-  attr_accessor :airlineid
-  attr_accessor :sourceairport
-  attr_accessor :destinationairport
-  attr_accessor :stops
-  attr_accessor :equipment
-  attr_accessor :schedule
-  attr_accessor :distance
+  attr_accessor :airline, :airlineid, :sourceairport, :destinationairport, :stops, :equipment, :schedule, :distance
 
   def initialize(attributes)
     @airline = attributes['airline']
@@ -37,13 +30,9 @@ class Route
     missing_fields = required_fields - attributes.keys
     extra_fields = attributes.keys - required_fields
 
-    if missing_fields.any?
-      raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}"
-    end
+    raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}" if missing_fields.any?
 
-    if extra_fields.any?
-      raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}"
-    end
+    raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}" if extra_fields.any?
 
     formatted_attributes = {
       'airline' => attributes['airline'],
@@ -72,13 +61,9 @@ class Route
     missing_fields = required_fields - attributes.keys
     extra_fields = attributes.keys - required_fields
 
-    if missing_fields.any?
-      raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}"
-    end
+    raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}" if missing_fields.any?
 
-    if extra_fields.any?
-      raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}"
-    end
+    raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}" if extra_fields.any?
 
     formatted_attributes = {
       'airline' => attributes['airline'],

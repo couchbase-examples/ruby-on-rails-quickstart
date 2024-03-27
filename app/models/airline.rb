@@ -1,10 +1,7 @@
 # frozen_string_literal: true
+
 class Airline
-  attr_accessor :name
-  attr_accessor :iata
-  attr_accessor :icao
-  attr_accessor :callsign
-  attr_accessor :country
+  attr_accessor :name, :iata, :icao, :callsign, :country
 
   def initialize(attributes)
     @name = attributes['name']
@@ -28,7 +25,8 @@ class Airline
 
     query = country ? "SELECT * FROM `#{bucket_name}`.`#{scope_name}`.`#{collection_name}` WHERE country = $country LIMIT $limit OFFSET $offset" : "SELECT * FROM `#{bucket_name}`.`#{scope_name}`.`#{collection_name}` LIMIT $limit OFFSET $offset"
     options = Couchbase::Cluster::QueryOptions.new
-    options.named_parameters(country ? { "country" => country, "limit" => limit.to_i, "offset" => offset.to_i } : { "limit" => limit.to_i, "offset" => offset.to_i })
+    options.named_parameters(country ? { 'country' => country, 'limit' => limit.to_i,
+                                         'offset' => offset.to_i } : { 'limit' => limit.to_i, 'offset' => offset.to_i })
 
     result = COUCHBASE_CLUSTER.query(query, options)
     result.rows.map { |row| new(row.fetch('airline', {})) }.to_a
@@ -53,7 +51,7 @@ class Airline
     "
 
     options = Couchbase::Cluster::QueryOptions.new
-    options.named_parameters({ "airport" => destination_airport_code, "limit" => limit.to_i, "offset" => offset.to_i })
+    options.named_parameters({ 'airport' => destination_airport_code, 'limit' => limit.to_i, 'offset' => offset.to_i })
 
     result = COUCHBASE_CLUSTER.query(query, options)
     result.rows.map { |row| new(row) }
@@ -64,13 +62,9 @@ class Airline
     missing_fields = required_fields - attributes.keys
     extra_fields = attributes.keys - required_fields
 
-    if missing_fields.any?
-      raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}"
-    end
+    raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}" if missing_fields.any?
 
-    if extra_fields.any?
-      raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}"
-    end
+    raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}" if extra_fields.any?
 
     formatted_attributes = {
       'name' => attributes['name'],
@@ -88,13 +82,9 @@ class Airline
     missing_fields = required_fields - attributes.keys
     extra_fields = attributes.keys - required_fields
 
-    if missing_fields.any?
-      raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}"
-    end
+    raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}" if missing_fields.any?
 
-    if extra_fields.any?
-      raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}"
-    end
+    raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}" if extra_fields.any?
 
     formatted_attributes = {
       'name' => attributes['name'],
@@ -106,7 +96,6 @@ class Airline
     AIRLINE_COLLECTION.upsert(id, formatted_attributes)
     self.class.new(formatted_attributes)
   end
-  
 
   def destroy(id)
     AIRLINE_COLLECTION.remove(id)

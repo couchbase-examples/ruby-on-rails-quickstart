@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-describe 'Routes API', type: :request  do
+describe 'Routes API', type: :request do
   path '/api/v1/routes/{id}' do
     get 'Retrieves a route by ID' do
       tags 'Routes'
@@ -9,27 +9,28 @@ describe 'Routes API', type: :request  do
 
       response '200', 'route found' do
         schema type: :object,
-          properties: {
-            airline: { type: :string },
-            airlineid: { type: :string },
-            sourceairport: { type: :string },
-            destinationairport: { type: :string },
-            stops: { type: :integer },
-            equipment: { type: :string },
-            schedule: {
-              type: :array,
-              items: {
-                type: :object,
-                properties: {
-                  day: { type: :integer },
-                  flight: { type: :string },
-                  utc: { type: :string }
-                }
-              }
-            },
-            distance: { type: :number }
-          },
-          required: ['airline', 'airlineid', 'sourceairport', 'destinationairport', 'stops', 'equipment', 'schedule', 'distance']
+               properties: {
+                 airline: { type: :string },
+                 airlineid: { type: :string },
+                 sourceairport: { type: :string },
+                 destinationairport: { type: :string },
+                 stops: { type: :integer },
+                 equipment: { type: :string },
+                 schedule: {
+                   type: :array,
+                   items: {
+                     type: :object,
+                     properties: {
+                       day: { type: :integer },
+                       flight: { type: :string },
+                       utc: { type: :string }
+                     }
+                   }
+                 },
+                 distance: { type: :number }
+               },
+               required: %w[airline airlineid sourceairport destinationairport stops equipment schedule
+                            distance]
 
         let(:id) { 'route_10209' }
         run_test!
@@ -67,7 +68,8 @@ describe 'Routes API', type: :request  do
           },
           distance: { type: :number }
         },
-        required: ['airline', 'airlineid', 'sourceairport', 'destinationairport', 'stops', 'equipment', 'schedule', 'distance']
+        required: %w[airline airlineid sourceairport destinationairport stops equipment schedule
+                     distance]
       }
 
       response '201', 'route created' do
@@ -126,7 +128,6 @@ describe 'Routes API', type: :request  do
         end
         run_test!
       end
-
     end
 
     put 'Updates a route' do

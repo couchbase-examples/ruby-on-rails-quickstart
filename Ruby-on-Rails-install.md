@@ -54,13 +54,14 @@ gem install rails
 rails -v
 ```
 
-## How to fix Error running '__rvm_make -j8'
+## How to fix Error running '\_\_rvm_make -j8'
 
 Uninstall openssl@3 and install openssl@1.1
 
 ```sh
-brew uninstall --ignore-dependencies openssl@3 
+brew uninstall --ignore-dependencies openssl@3
 ```
+
 https://stackoverflow.com/questions/76815495/how-to-fix-error-running-rvm-make-j8
 https://github.com/rvm/rvm/issues/5254
 
