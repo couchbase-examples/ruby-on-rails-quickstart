@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      // Run all tests in a file using Minitest
+      {
+        "type": "rdbg",
+        "name": "Minitest - current file",
+        "request": "launch",
+        "script": "-Itest ${file}",
+        "askParameters": false
+      },
+      // If your test runner supports line numbers, such as in Rails,
+      // you can add a task like this one to run only the test under the cursor
+      {
+        "name": "Minitest - current line",
+        "type": "rdbg",
+        "request": "launch",
+        "command": "${workspaceRoot}/bin/rails",
+        "script": "test",
+        "args": ["${file}:${lineNumber}"],
+        "askParameters": false
+      },
+      // Attach the debugger to an active process (for example, Rails server)
+      {
+        "type": "rdbg",
+        "name": "Attach with rdbg",
+        "request": "attach"
+      }
+    ]
+  }
