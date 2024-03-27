@@ -33,6 +33,18 @@ class Route
   end
 
   def self.create(id, attributes)
+    required_fields = %w[airline airlineid sourceairport destinationairport stops equipment distance schedule]
+    missing_fields = required_fields - attributes.keys
+    extra_fields = attributes.keys - required_fields
+
+    if missing_fields.any?
+      raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}"
+    end
+
+    if extra_fields.any?
+      raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}"
+    end
+
     formatted_attributes = {
       'airline' => attributes['airline'],
       'airlineid' => attributes['airlineid'],
@@ -56,6 +68,18 @@ class Route
   end
 
   def update(id, attributes)
+    required_fields = %w[airline airlineid sourceairport destinationairport stops equipment distance schedule]
+    missing_fields = required_fields - attributes.keys
+    extra_fields = attributes.keys - required_fields
+
+    if missing_fields.any?
+      raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}"
+    end
+
+    if extra_fields.any?
+      raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}"
+    end
+
     formatted_attributes = {
       'airline' => attributes['airline'],
       'airlineid' => attributes['airlineid'],

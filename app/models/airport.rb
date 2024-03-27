@@ -29,19 +29,35 @@ class Airport
   end
 
   def self.create(id, attributes)
+    required_fields = %w[airportname city country faa icao tz]
+    missing_fields = required_fields - attributes.keys
+    extra_fields = attributes.keys - (required_fields + ['geo'])
+
+    if missing_fields.any?
+      raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}"
+    end
+
+    if extra_fields.any?
+      raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}"
+    end
+
     formatted_attributes = {
       'airportname' => attributes['airportname'],
       'city' => attributes['city'],
       'country' => attributes['country'],
       'faa' => attributes['faa'],
       'icao' => attributes['icao'],
-      'tz' => attributes['tz'],
-      'geo' => {
+      'tz' => attributes['tz']
+    }
+
+    if attributes['geo']
+      formatted_attributes['geo'] = {
         'lat' => attributes['geo']['lat'].to_f,
         'lon' => attributes['geo']['lon'].to_f,
         'alt' => attributes['geo']['alt'].to_f
       }
-    }
+    end
+
     AIRPORT_COLLECTION.insert(id, formatted_attributes)
     new(formatted_attributes)
   rescue Couchbase::Error::DocumentExists
@@ -49,19 +65,35 @@ class Airport
   end
 
   def update(id, attributes)
+    required_fields = %w[airportname city country faa icao tz]
+    missing_fields = required_fields - attributes.keys
+    extra_fields = attributes.keys - (required_fields + ['geo'])
+
+    if missing_fields.any?
+      raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}"
+    end
+
+    if extra_fields.any?
+      raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}"
+    end
+
     formatted_attributes = {
       'airportname' => attributes['airportname'],
       'city' => attributes['city'],
       'country' => attributes['country'],
       'faa' => attributes['faa'],
       'icao' => attributes['icao'],
-      'tz' => attributes['tz'],
-      'geo' => {
+      'tz' => attributes['tz']
+    }
+
+    if attributes['geo']
+      formatted_attributes['geo'] = {
         'lat' => attributes['geo']['lat'].to_f,
         'lon' => attributes['geo']['lon'].to_f,
         'alt' => attributes['geo']['alt'].to_f
       }
-    }
+    end
+
     AIRPORT_COLLECTION.upsert(id, formatted_attributes)
     self.class.new(formatted_attributes)
   rescue Couchbase::Error::DocumentNotFound
@@ -93,9 +125,9 @@ class Airport
 
     options = Couchbase::Cluster::QueryOptions.new
     options.named_parameters({
-      "destinationAirportCode" => destination_airport_code,
-      "limit" => limit.to_i,
-      "offset" => offset.to_i
+      'destinationAirportCode' => destination_airport_code,
+      'limit' => limit.to_i,
+      'offset' => offset.to_i
     })
 
     result = COUCHBASE_CLUSTER.query(query, options)
