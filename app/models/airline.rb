@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 class Airline
-  attr_accessor :id
   attr_accessor :name
   attr_accessor :iata
   attr_accessor :icao
@@ -8,7 +7,6 @@ class Airline
   attr_accessor :country
 
   def initialize(attributes)
-    @id = attributes['id']
     @name = attributes['name']
     @iata = attributes['iata']
     @icao = attributes['icao']
@@ -61,10 +59,20 @@ class Airline
     result.rows.map { |row| new(row) }
   end
 
-  def self.create(id,attributes)
+  def self.create(id, attributes)
+    required_fields = %w[name iata icao callsign country]
+    missing_fields = required_fields - attributes.keys
+    extra_fields = attributes.keys - required_fields
+
+    if missing_fields.any?
+      raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}"
+    end
+
+    if extra_fields.any?
+      raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}"
+    end
+
     formatted_attributes = {
-      'id' => attributes['id'],
-      'type' => 'airline',
       'name' => attributes['name'],
       'iata' => attributes['iata'],
       'icao' => attributes['icao'],
@@ -73,14 +81,22 @@ class Airline
     }
     AIRLINE_COLLECTION.insert(id, formatted_attributes)
     new(formatted_attributes)
-  rescue Couchbase::Error::DocumentExists
-    raise Couchbase::Error::DocumentExists, "Airline with ID #{id} already exists"
   end
 
-  def update(id,attributes)
+  def update(id, attributes)
+    required_fields = %w[name iata icao callsign country]
+    missing_fields = required_fields - attributes.keys
+    extra_fields = attributes.keys - required_fields
+
+    if missing_fields.any?
+      raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}"
+    end
+
+    if extra_fields.any?
+      raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}"
+    end
+
     formatted_attributes = {
-      'id' => attributes['id'],
-      'type' => 'airline',
       'name' => attributes['name'],
       'iata' => attributes['iata'],
       'icao' => attributes['icao'],
@@ -89,14 +105,10 @@ class Airline
     }
     AIRLINE_COLLECTION.upsert(id, formatted_attributes)
     self.class.new(formatted_attributes)
-  rescue Couchbase::Error::DocumentNotFound
-    raise Couchbase::Error::DocumentNotFound, "Airline with ID #{id} not found"
   end
+  
 
   def destroy(id)
     AIRLINE_COLLECTION.remove(id)
-    true
-  rescue Couchbase::Error::DocumentNotFound
-    false
   end
 end

@@ -10,8 +10,6 @@ describe 'Airports API', type: :request  do
       response '200', 'airport found' do
         schema type: :object,
           properties: {
-            id: { type: :integer },
-            type: { type: :string },
             airportname: { type: :string },
             city: { type: :string },
             country: { type: :string },
@@ -27,7 +25,7 @@ describe 'Airports API', type: :request  do
               }
             }
           },
-          required: ['id', 'type', 'airportname', 'city', 'country', 'faa', 'icao', 'tz', 'geo']
+          required: ['airportname', 'city', 'country', 'faa', 'icao', 'tz', 'geo']
 
         let(:id) { 'airport_1262' }
         run_test!
@@ -46,8 +44,6 @@ describe 'Airports API', type: :request  do
       parameter name: :airport, in: :body, schema: {
         type: :object,
         properties: {
-          id: { type: :integer },
-          type: { type: :string },
           airportname: { type: :string },
           city: { type: :string },
           country: { type: :string },
@@ -63,14 +59,12 @@ describe 'Airports API', type: :request  do
             }
           }
         },
-        required: ['id', 'type', 'airportname', 'city', 'country', 'faa', 'icao', 'tz', 'geo']
+        required: ['airportname', 'city', 'country', 'faa', 'icao', 'tz', 'geo']
       }
 
       response '201', 'airport created' do
         let(:airport) do
           {
-            id: 999,
-            type: 'test-airport',
             airportname: 'Test Airport',
             city: 'Test City',
             country: 'Test Country',
@@ -87,12 +81,27 @@ describe 'Airports API', type: :request  do
         run_test!
       end
 
-      # 409
+      response '400', 'bad request' do
+        let(:airport) do
+          {
+            airportname: 'Test Airport',
+            city: 'Test City',
+            country: 'Test Country',
+            faa: '',
+            icao: 'Test LFAG',
+            tz: 'Test Europe/Paris',
+            geo: {
+              lat: 49.868547,
+              lon: 3.029578
+            }
+          }
+        end
+        run_test!
+      end
+
       response '409', 'airport already exists' do
         let(:airport) do
           {
-            id: 999,
-            type: 'test-airport',
             airportname: 'Test Airport',
             city: 'Test City',
             country: 'Test Country',
@@ -109,10 +118,6 @@ describe 'Airports API', type: :request  do
         run_test!
       end
 
-      response '422', 'invalid request' do
-        let(:airport) { { airportname: 'Test Airport' } }
-        run_test!
-      end
     end
 
     put 'Updates an airport' do
@@ -145,9 +150,9 @@ describe 'Airports API', type: :request  do
         run_test!
       end
 
-      response '404', 'airport not found' do
-        let(:id) { 'invalid_id' }
-        let(:airport) { { airportname: 'Updated Airport' } }
+      response '400', 'bad request' do
+        let(:id) { 'airport_1262' }
+        let(:airport) { { airportname: '' } }
         run_test!
       end
     end

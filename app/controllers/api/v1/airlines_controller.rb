@@ -11,8 +11,12 @@ module Api
         if @airline
           render json: @airline, status: :ok
         else
-          render json: { message: 'Airline not found' }, status: :not_found
+          render json: { error: "Airline with ID #{params[:id]} not found" }, status: :not_found
         end
+      rescue Couchbase::Error::DocumentNotFound => e
+        render json: { error: "Airline with ID #{params[:id]} not found", message: e.message }, status: :not_found
+      rescue StandardError => e
+        render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
 
       # POST /api/v1/airlines/{id}
@@ -23,27 +27,24 @@ module Api
         else
           render json: { message: 'Airline already exists' }, status: :conflict
         end
+      rescue ArgumentError => e
+        render json: { error: 'Invalid request', message: e.message }, status: :bad_request
       rescue Couchbase::Error::DocumentExists => e
-        render json: { error: 'Airline already exists', message: e.message }, status: :conflict
+        render json: { error: "Airline with ID #{params[:id]} already exists", message: e.message }, status: :conflict
       rescue StandardError => e
         render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
 
       # PUT /api/v1/airlines/{id}
       def update
-        if @airline
-          if @airline.update(params[:id], airline_params)
-            render json: @airline, status: :ok
-          else
-            render json: { message: 'Failed to update airline' }, status: :unprocessable_entity
-          end
-        else
-          render json: { message: 'Airline not found' }, status: :not_found
+        begin
+          @airline = Airline.new(airline_params).update(params[:id], airline_params)
+          render json: @airline, status: :ok
+        rescue ArgumentError => e
+          render json: { error: 'Invalid request', message: e.message }, status: :bad_request
+        rescue StandardError => e
+          render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
         end
-      rescue Couchbase::Error::DocumentNotFound => e
-        render json: { error: 'Airline not found', message: e.message }, status: :not_found
-      rescue StandardError => e
-        render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
 
       # DELETE /api/v1/airlines/{id}
@@ -52,13 +53,13 @@ module Api
           if @airline.destroy(params[:id])
             render json: { message: 'Airline deleted successfully' }, status: :accepted
           else
-            render json: { message: 'Failed to delete airline' }, status: :unprocessable_entity
+            render json: { message: 'Failed to delete airline' }, status: :bad_request
           end
         else
-          render json: { message: 'Airline not found' }, status: :not_found
+          render json: { error: "Airline with ID #{params[:id]} not found" }, status: :not_found
         end
       rescue Couchbase::Error::DocumentNotFound => e
-        render json: { error: 'Airline not found', message: e.message }, status: :not_found
+        render json: { error: "Airline with ID #{params[:id]} not found", message: e.message }, status: :not_found
       rescue StandardError => e
         render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
@@ -105,7 +106,7 @@ module Api
       end
 
       def airline_params
-        params.require(:airline).permit(:callsign, :country, :iata, :icao, :id, :name, :type)
+        params.require(:airline).permit(:callsign, :country, :iata, :icao, :name)
       end
     end
   end

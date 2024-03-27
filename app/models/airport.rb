@@ -1,6 +1,4 @@
 class Airport
-  attr_accessor :id
-  attr_accessor :type
   attr_accessor :airportname
   attr_accessor :city
   attr_accessor :country
@@ -10,15 +8,17 @@ class Airport
   attr_accessor :geo
 
   def initialize(attributes)
-    @id = attributes['id']
-    @type = attributes['type']
     @airportname = attributes['airportname']
     @city = attributes['city']
     @country = attributes['country']
     @faa = attributes['faa']
     @icao = attributes['icao']
     @tz = attributes['tz']
-    @geo = attributes['geo']
+    @geo = {
+      'lat' => attributes['geo']['lat'].to_f,
+      'lon' => attributes['geo']['lon'].to_f,
+      'alt' => attributes['geo']['alt'].to_f
+    }
   end
 
   def self.find(id)
@@ -28,17 +28,19 @@ class Airport
     nil
   end
 
-  def self.create(id,attributes)
+  def self.create(id, attributes)
     formatted_attributes = {
-      'id' => attributes['id'],
-      'type' => 'airport',
       'airportname' => attributes['airportname'],
       'city' => attributes['city'],
       'country' => attributes['country'],
       'faa' => attributes['faa'],
       'icao' => attributes['icao'],
       'tz' => attributes['tz'],
-      'geo' => attributes['geo']
+      'geo' => {
+        'lat' => attributes['geo']['lat'].to_f,
+        'lon' => attributes['geo']['lon'].to_f,
+        'alt' => attributes['geo']['alt'].to_f
+      }
     }
     AIRPORT_COLLECTION.insert(id, formatted_attributes)
     new(formatted_attributes)
@@ -46,17 +48,19 @@ class Airport
     raise Couchbase::Error::DocumentExists, "Airport with ID #{id} already exists"
   end
 
-  def update(id,attributes)
+  def update(id, attributes)
     formatted_attributes = {
-      'id' => attributes['id'],
-      'type' => 'airport',
       'airportname' => attributes['airportname'],
       'city' => attributes['city'],
       'country' => attributes['country'],
       'faa' => attributes['faa'],
       'icao' => attributes['icao'],
       'tz' => attributes['tz'],
-      'geo' => attributes['geo']
+      'geo' => {
+        'lat' => attributes['geo']['lat'].to_f,
+        'lon' => attributes['geo']['lon'].to_f,
+        'alt' => attributes['geo']['alt'].to_f
+      }
     }
     AIRPORT_COLLECTION.upsert(id, formatted_attributes)
     self.class.new(formatted_attributes)
@@ -80,13 +84,19 @@ class Airport
     query = "
       SELECT DISTINCT route.destinationairport
       FROM `#{bucket_name}`.`#{scope_name}`.`#{airport_collection_name}` AS airport
-      JOIN `#{bucket_name}`.`#{scope_name}`.`#{route_collection_name}` AS route ON route.sourceairport = airport.faa
-      WHERE airport.faa = $destinationAirportCode AND route.stops = 0
+      JOIN `#{bucket_name}`.`#{scope_name}`.`#{route_collection_name}` AS route
+      ON route.sourceairport = airport.faa
+      WHERE airport.faa = $destinationAirportCode
+      AND route.stops = 0
       LIMIT $limit OFFSET $offset
     "
 
     options = Couchbase::Cluster::QueryOptions.new
-    options.named_parameters({ "destinationAirportCode" => destination_airport_code, "limit" => limit.to_i, "offset" => offset.to_i })
+    options.named_parameters({
+      "destinationAirportCode" => destination_airport_code,
+      "limit" => limit.to_i,
+      "offset" => offset.to_i
+    })
 
     result = COUCHBASE_CLUSTER.query(query, options)
     result.rows.map { |row| row['destinationairport'] }

@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-describe 'Airlines API', type: :request  do
+describe 'Airlines API', type: :request do
   path '/api/v1/airlines/{id}' do
     get 'Retrieves an airline by ID' do
       tags 'Airlines'
@@ -10,14 +10,13 @@ describe 'Airlines API', type: :request  do
       response '200', 'airline found' do
         schema type: :object,
           properties: {
-            id: { type: :integer },
             name: { type: :string },
             iata: { type: :string },
             icao: { type: :string },
             callsign: { type: :string },
             country: { type: :string }
           },
-          required: ['id', 'name', 'iata', 'icao', 'callsign', 'country']
+          required: ['name', 'iata', 'icao', 'callsign', 'country']
 
         let(:id) { 'airline_10' }
         run_test!
@@ -36,30 +35,30 @@ describe 'Airlines API', type: :request  do
       parameter name: :airline, in: :body, schema: {
         type: :object,
         properties: {
-          id: { type: :integer },
           name: { type: :string },
           iata: { type: :string },
           icao: { type: :string },
           callsign: { type: :string },
           country: { type: :string }
         },
-        required: ['id', 'name', 'iata', 'icao', 'callsign', 'country']
+        required: ['name', 'iata', 'icao', 'callsign', 'country']
       }
 
       response '201', 'airline created' do
-        let(:airline) { { id: 1, name: 'Foo Airlines', iata: 'FA', icao: 'FOO', callsign: 'FOO', country: 'US' } }
+        let(:airline) { { name: 'Foo Airlines', iata: 'FA', icao: 'FOO', callsign: 'FOO', country: 'US' } }
+        run_test!
+      end
+
+      response '400', 'bad request' do
+        let(:airline) { { name: 'Foo Airlines', iata: 'FA', icao: 'FOO', callsign: 'FOO' } }
         run_test!
       end
 
       response '409', 'airline already exists' do
-        let(:airline) { { id: 1, name: 'Foo Airlines', iata: 'FA', icao: 'FOO', callsign: 'FOO', country: 'US' } }
+        let(:airline) { { name: 'Foo Airlines', iata: 'FA', icao: 'FOO', callsign: 'FOO', country: 'US' } }
         run_test!
       end
 
-      response '422', 'invalid request' do
-        let(:airline) { { name: 'Foo Airlines' } }
-        run_test!
-      end
     end
 
     put 'Updates an airline' do
@@ -83,9 +82,9 @@ describe 'Airlines API', type: :request  do
         run_test!
       end
 
-      response '404', 'airline not found' do
-        let(:id) { 'invalid_id' }
-        let(:airline) { { name: 'Updated Airline' } }
+      response '400', 'bad request' do
+        let(:id) { 'airline_10' }
+        let(:airline) { { name: '' } }
         run_test!
       end
     end
@@ -119,14 +118,13 @@ describe 'Airlines API', type: :request  do
           items: {
             type: :object,
             properties: {
-              id: { type: :integer },
               name: { type: :string },
               iata: { type: :string },
               icao: { type: :string },
               callsign: { type: :string },
               country: { type: :string }
             },
-            required: ['id', 'name', 'iata', 'icao', 'callsign', 'country']
+            required: ['name', 'iata', 'icao', 'callsign', 'country']
           }
 
         let(:country) { 'United States' }
@@ -150,14 +148,13 @@ describe 'Airlines API', type: :request  do
           items: {
             type: :object,
             properties: {
-              id: { type: :integer },
               name: { type: :string },
               iata: { type: :string },
               icao: { type: :string },
               callsign: { type: :string },
               country: { type: :string }
             },
-            required: ['id', 'name', 'iata', 'icao', 'callsign', 'country']
+            required: ['name', 'iata', 'icao', 'callsign', 'country']
           }
 
         let(:destinationAirportCode) { 'LAX' }

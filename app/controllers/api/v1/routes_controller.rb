@@ -31,28 +31,23 @@ module Api
 
       # PUT /api/v1/routes/{id}
       def update
-        if @route
-          if @route.update(params[:id], route_params)
-            render json: @route, status: :ok
-          else
-            render json: { message: 'Failed to update route' }, status: :unprocessable_entity
-          end
-        else
-          render json: { message: 'Route not found' }, status: :not_found
+        begin
+          @route = Route.new(route_params).update(params[:id], route_params)
+          render json: @route, status: :ok
+        rescue ArgumentError => e
+          render json: { error: 'Invalid request', message: e.message }, status: :bad_request
+        rescue StandardError => e
+          render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
         end
-      rescue Couchbase::Error::DocumentNotFound => e
-        render json: { error: 'Route not found', message: e.message }, status: :not_found
-      rescue StandardError => e
-        render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
-
+      
       # DELETE /api/v1/routes/{id}
       def destroy
         if @route
           if @route.destroy(params[:id])
             render json: { message: 'Route deleted successfully' }, status: :accepted
           else
-            render json: { message: 'Failed to delete route' }, status: :unprocessable_entity
+            render json: { message: 'Failed to delete route' }, status: :bad_request
           end
         else
           render json: { message: 'Route not found' }, status: :not_found

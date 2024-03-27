@@ -10,8 +10,6 @@ describe 'Routes API', type: :request  do
       response '200', 'route found' do
         schema type: :object,
           properties: {
-            id: { type: :integer },
-            type: { type: :string },
             airline: { type: :string },
             airlineid: { type: :string },
             sourceairport: { type: :string },
@@ -31,7 +29,7 @@ describe 'Routes API', type: :request  do
             },
             distance: { type: :number }
           },
-          required: ['id', 'type']
+          required: ['airline', 'airlineid', 'sourceairport', 'destinationairport', 'stops', 'equipment', 'schedule', 'distance']
 
         let(:id) { 'route_10209' }
         run_test!
@@ -50,8 +48,6 @@ describe 'Routes API', type: :request  do
       parameter name: :route, in: :body, schema: {
         type: :object,
         properties: {
-          id: { type: :integer },
-          type: { type: :string },
           airline: { type: :string },
           airlineid: { type: :string },
           sourceairport: { type: :string },
@@ -71,14 +67,12 @@ describe 'Routes API', type: :request  do
           },
           distance: { type: :number }
         },
-        required: ['id', 'type']
+        required: ['airline', 'airlineid', 'sourceairport', 'destinationairport', 'stops', 'equipment', 'schedule', 'distance']
       }
 
       response '201', 'route created' do
         let(:route) do
           {
-            id: 10001,
-            type: 'route',
             airline: 'AF',
             airlineid: 'airline_137',
             sourceairport: 'TLV',
@@ -88,6 +82,25 @@ describe 'Routes API', type: :request  do
             schedule: [
               { day: 0, utc: '10:13:00', flight: 'AF198' },
               { day: 0, utc: '19:14:00', flight: 'AF547' }
+            ],
+            distance: 2881.617376098415
+          }
+        end
+        run_test!
+      end
+
+      response '400', 'bad request' do
+        let(:route) do
+          {
+            airline: 'AF',
+            airlineid: 'airline_137',
+            sourceairport: 'TLV',
+            destinationairport: 'MRS',
+            stops: 0,
+            equipment: '320',
+            schedule: [
+              { day: 0, utc: '10:13:00', flight: 'AF198' },
+              { day: 0, utc: '19:14:00' }
             ],
             distance: 2881.617376098415
           }
@@ -98,8 +111,6 @@ describe 'Routes API', type: :request  do
       response '409', 'route already exists' do
         let(:route) do
           {
-            id: 10001,
-            type: 'route',
             airline: 'AF',
             airlineid: 'airline_137',
             sourceairport: 'TLV',
@@ -116,10 +127,6 @@ describe 'Routes API', type: :request  do
         run_test!
       end
 
-      response '422', 'invalid request' do
-        let(:route) { { id: 10001 } }
-        run_test!
-      end
     end
 
     put 'Updates a route' do
@@ -156,9 +163,9 @@ describe 'Routes API', type: :request  do
         run_test!
       end
 
-      response '404', 'route not found' do
-        let(:id) { 'invalid_id' }
-        let(:route) { { stops: 1 } }
+      response '400', 'bad request' do
+        let(:id) { 'route_10209' }
+        let(:route) { { stops: 'invalid' } }
         run_test!
       end
     end

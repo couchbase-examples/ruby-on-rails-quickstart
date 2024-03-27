@@ -1,6 +1,4 @@
 class Route
-  attr_accessor :id
-  attr_accessor :type
   attr_accessor :airline
   attr_accessor :airlineid
   attr_accessor :sourceairport
@@ -11,16 +9,20 @@ class Route
   attr_accessor :distance
 
   def initialize(attributes)
-    @id = attributes['id']
-    @type = attributes['type']
     @airline = attributes['airline']
     @airlineid = attributes['airlineid']
     @sourceairport = attributes['sourceairport']
     @destinationairport = attributes['destinationairport']
-    @stops = attributes['stops']
+    @stops = attributes['stops'].to_i
     @equipment = attributes['equipment']
-    @schedule = attributes['schedule']
-    @distance = attributes['distance']
+    @schedule = attributes['schedule'].map do |sched|
+      {
+        'day' => sched['day'].to_i,
+        'utc' => sched['utc'],
+        'flight' => sched['flight']
+      }
+    end
+    @distance = attributes['distance'].to_f
   end
 
   def self.find(id)
@@ -30,18 +32,22 @@ class Route
     nil
   end
 
-  def self.create(id,attributes)
+  def self.create(id, attributes)
     formatted_attributes = {
-      'id' => attributes['id'],
-      'type' => 'route',
       'airline' => attributes['airline'],
       'airlineid' => attributes['airlineid'],
       'sourceairport' => attributes['sourceairport'],
       'destinationairport' => attributes['destinationairport'],
-      'stops' => attributes['stops'],
+      'stops' => attributes['stops'].to_i,
       'equipment' => attributes['equipment'],
-      'schedule' => attributes['schedule'],
-      'distance' => attributes['distance']
+      'schedule' => attributes['schedule'].map do |sched|
+        {
+          'day' => sched['day'].to_i,
+          'utc' => sched['utc'],
+          'flight' => sched['flight']
+        }
+      end,
+      'distance' => attributes['distance'].to_f
     }
     ROUTE_COLLECTION.insert(id, formatted_attributes)
     new(formatted_attributes)
@@ -49,18 +55,22 @@ class Route
     raise Couchbase::Error::DocumentExists, "Route with ID #{id} already exists"
   end
 
-  def update(id,attributes)
+  def update(id, attributes)
     formatted_attributes = {
-      'id' => attributes['id'],
-      'type' => 'route',
       'airline' => attributes['airline'],
       'airlineid' => attributes['airlineid'],
       'sourceairport' => attributes['sourceairport'],
       'destinationairport' => attributes['destinationairport'],
-      'stops' => attributes['stops'],
+      'stops' => attributes['stops'].to_i,
       'equipment' => attributes['equipment'],
-      'schedule' => attributes['schedule'],
-      'distance' => attributes['distance']
+      'schedule' => attributes['schedule'].map do |sched|
+        {
+          'day' => sched['day'].to_i,
+          'utc' => sched['utc'],
+          'flight' => sched['flight']
+        }
+      end,
+      'distance' => attributes['distance'].to_f
     }
     ROUTE_COLLECTION.upsert(id, formatted_attributes)
     self.class.new(formatted_attributes)
