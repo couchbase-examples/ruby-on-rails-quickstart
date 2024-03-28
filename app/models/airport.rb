@@ -9,9 +9,9 @@ class Airport
     @icao = attributes['icao']
     @tz = attributes['tz']
     @geo = {
-      'lat' => attributes['geo']['lat'].to_f,
-      'lon' => attributes['geo']['lon'].to_f,
-      'alt' => attributes['geo']['alt'].to_f
+      'lat' => attributes.dig('geo', 'lat').to_f,
+      'lon' => attributes.dig('geo', 'lon').to_f,
+      'alt' => attributes.dig('geo', 'alt').to_f
     }
   end
 
@@ -23,7 +23,7 @@ class Airport
   end
 
   def self.create(id, attributes)
-    required_fields = %w[airportname city country faa icao tz]
+    required_fields = %w[airportname city country faa icao tz geo]
     missing_fields = required_fields - attributes.keys
     extra_fields = attributes.keys - (required_fields + ['geo'])
 
@@ -37,16 +37,13 @@ class Airport
       'country' => attributes['country'],
       'faa' => attributes['faa'],
       'icao' => attributes['icao'],
-      'tz' => attributes['tz']
+      'tz' => attributes['tz'],
+      'geo' => {}
     }
 
-    if attributes['geo']
-      formatted_attributes['geo'] = {
-        'lat' => attributes['geo']['lat'].to_f,
-        'lon' => attributes['geo']['lon'].to_f,
-        'alt' => attributes['geo']['alt'].to_f
-      }
-    end
+    formatted_attributes['geo']['lat'] = attributes.dig('geo', 'lat').to_f if attributes.dig('geo', 'lat')
+    formatted_attributes['geo']['lon'] = attributes.dig('geo', 'lon').to_f if attributes.dig('geo', 'lon')
+    formatted_attributes['geo']['alt'] = attributes.dig('geo', 'alt').to_f if attributes.dig('geo', 'alt')
 
     AIRPORT_COLLECTION.insert(id, formatted_attributes)
     new(formatted_attributes)
@@ -55,7 +52,7 @@ class Airport
   end
 
   def update(id, attributes)
-    required_fields = %w[airportname city country faa icao tz]
+    required_fields = %w[airportname city country faa icao tz geo]
     missing_fields = required_fields - attributes.keys
     extra_fields = attributes.keys - (required_fields + ['geo'])
 
@@ -69,16 +66,13 @@ class Airport
       'country' => attributes['country'],
       'faa' => attributes['faa'],
       'icao' => attributes['icao'],
-      'tz' => attributes['tz']
+      'tz' => attributes['tz'],
+      'geo' => {}
     }
 
-    if attributes['geo']
-      formatted_attributes['geo'] = {
-        'lat' => attributes['geo']['lat'].to_f,
-        'lon' => attributes['geo']['lon'].to_f,
-        'alt' => attributes['geo']['alt'].to_f
-      }
-    end
+    formatted_attributes['geo']['lat'] = attributes.dig('geo', 'lat').to_f if attributes.dig('geo', 'lat')
+    formatted_attributes['geo']['lon'] = attributes.dig('geo', 'lon').to_f if attributes.dig('geo', 'lon')
+    formatted_attributes['geo']['alt'] = attributes.dig('geo', 'alt').to_f if attributes.dig('geo', 'alt')
 
     AIRPORT_COLLECTION.upsert(id, formatted_attributes)
     self.class.new(formatted_attributes)

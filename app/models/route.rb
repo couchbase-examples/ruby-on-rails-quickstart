@@ -8,7 +8,7 @@ class Route
     @destinationairport = attributes['destinationairport']
     @stops = attributes['stops'].to_i
     @equipment = attributes['equipment']
-    @schedule = attributes['schedule'].map do |sched|
+    @schedule = (attributes['schedule'] || []).map do |sched|
       {
         'day' => sched['day'].to_i,
         'utc' => sched['utc'],
@@ -26,12 +26,11 @@ class Route
   end
 
   def self.create(id, attributes)
-    required_fields = %w[airline airlineid sourceairport destinationairport stops equipment distance schedule]
+    required_fields = %w[airline airlineid sourceairport destinationairport stops equipment distance]
     missing_fields = required_fields - attributes.keys
-    extra_fields = attributes.keys - required_fields
+    extra_fields = attributes.keys - (required_fields + ['schedule'])
 
     raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}" if missing_fields.any?
-
     raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}" if extra_fields.any?
 
     formatted_attributes = {
@@ -41,15 +40,16 @@ class Route
       'destinationairport' => attributes['destinationairport'],
       'stops' => attributes['stops'].to_i,
       'equipment' => attributes['equipment'],
-      'schedule' => attributes['schedule'].map do |sched|
+      'distance' => attributes['distance'].to_f,
+      'schedule' => (attributes['schedule'] || []).map do |sched|
         {
           'day' => sched['day'].to_i,
           'utc' => sched['utc'],
           'flight' => sched['flight']
         }
-      end,
-      'distance' => attributes['distance'].to_f
+      end
     }
+
     ROUTE_COLLECTION.insert(id, formatted_attributes)
     new(formatted_attributes)
   rescue Couchbase::Error::DocumentExists
@@ -57,12 +57,11 @@ class Route
   end
 
   def update(id, attributes)
-    required_fields = %w[airline airlineid sourceairport destinationairport stops equipment distance schedule]
+    required_fields = %w[airline airlineid sourceairport destinationairport stops equipment distance]
     missing_fields = required_fields - attributes.keys
-    extra_fields = attributes.keys - required_fields
+    extra_fields = attributes.keys - (required_fields + ['schedule'])
 
     raise ArgumentError, "Missing fields: #{missing_fields.join(', ')}" if missing_fields.any?
-
     raise ArgumentError, "Extra fields: #{extra_fields.join(', ')}" if extra_fields.any?
 
     formatted_attributes = {
@@ -72,15 +71,16 @@ class Route
       'destinationairport' => attributes['destinationairport'],
       'stops' => attributes['stops'].to_i,
       'equipment' => attributes['equipment'],
-      'schedule' => attributes['schedule'].map do |sched|
+      'distance' => attributes['distance'].to_f,
+      'schedule' => (attributes['schedule'] || []).map do |sched|
         {
           'day' => sched['day'].to_i,
           'utc' => sched['utc'],
           'flight' => sched['flight']
         }
-      end,
-      'distance' => attributes['distance'].to_f
+      end
     }
+
     ROUTE_COLLECTION.upsert(id, formatted_attributes)
     self.class.new(formatted_attributes)
   rescue Couchbase::Error::DocumentNotFound
