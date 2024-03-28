@@ -16,18 +16,16 @@ jobs:
       DB_CONN_STR: ${{ vars.DB_CONN_STR }}
       DB_USERNAME: ${{ vars.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-
+      DB_BUCKET_NAME: ${{ vars.DB_BUCKET_NAME }}
+      
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1.2
-
       - name: Install dependencies
         run: bundle install
-
       - name: Run tests
         run: bundle exec rspec test/integration
