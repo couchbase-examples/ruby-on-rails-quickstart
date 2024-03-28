@@ -32,7 +32,7 @@ We will walk through the different steps required to get the application running
 
 ### Cloning Repo
 ```sh
-git clone https://github.com/couchbase-examples/rails-capella-quickstart.git
+git clone https://github.com/couchbase-examples/ruby-on-rails-quickstart.git
 ```
 ### Install Dependencies
 Any dependencies will be installed by running the bundle install command, which installs any dependencies required for the project.
@@ -76,7 +76,7 @@ docker build -t couchbase-rails-quickstart .
 ```
 - Run the Docker image
 ```sh
-docker run -p 3000:3000 rails-capella-quickstart -e DB_CONN_STR=<connection_string> -e DB_USERNAME=<user_with_read_write_permission_to_travel-sample_bucket> -e DB_PASSWORD=<password_for_user>
+docker run -p 3000:3000 couchbase-rails-quickstart -e DB_CONN_STR=<connection_string> -e DB_USERNAME=<user_with_read_write_permission_to_travel-sample_bucket> -e DB_PASSWORD=<password_for_user>
 ```
 > Note: The dev.env.example file in the root folder has the connection information to connect to your Capella cluster. Create a copy of dev.env.example file and rename it to dev.env and add the values for the Couchbase connection.
 
