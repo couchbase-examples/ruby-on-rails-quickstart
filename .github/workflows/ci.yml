@@ -16,7 +16,6 @@ jobs:
       DB_CONN_STR: ${{ vars.DB_CONN_STR }}
       DB_USERNAME: ${{ vars.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_BUCKET_NAME: ${{ vars.DB_BUCKET_NAME }}
       
     steps:
       - name: Checkout code

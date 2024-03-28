@@ -4,7 +4,7 @@ require 'couchbase'
 DB_USERNAME = ENV['DB_USERNAME']
 DB_PASSWORD = ENV['DB_PASSWORD']
 DB_CONN_STR = ENV['DB_CONN_STR']
-DB_BUCKET_NAME = ENV['DB_BUCKET_NAME']
+DB_BUCKET_NAME = 'travel-sample' # Hardcoded bucket name
 
 # Check if running in CI environment
 if ENV['CI']
@@ -21,13 +21,11 @@ else
   DEFAULT_DB_USERNAME = 'Administrator'
   DEFAULT_DB_PASSWORD = 'password'
   DEFAULT_DB_CONN_STR = 'couchbase://localhost'
-  DEFAULT_DB_BUCKET_NAME = 'travel-sample'
 
   # Get environment variables with fallback to default values
   DB_USERNAME = ENV.fetch('DB_USERNAME', DEFAULT_DB_USERNAME)
   DB_PASSWORD = ENV.fetch('DB_PASSWORD', DEFAULT_DB_PASSWORD)
   DB_CONN_STR = ENV.fetch('DB_CONN_STR', DEFAULT_DB_CONN_STR)
-  DB_BUCKET_NAME = ENV.fetch('DB_BUCKET_NAME', DEFAULT_DB_BUCKET_NAME)
 
   # Connect to the Couchbase cluster
   options = Couchbase::Cluster::ClusterOptions.new
