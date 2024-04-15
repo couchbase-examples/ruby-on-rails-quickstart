@@ -9,8 +9,6 @@ Often, the first step developers take after creating their database is to create
 
 You can find the full documentation for the tutorial on the Couchbase Developer Portal.
 
-If you are looking for a quick start using Ruby on Rails, you can find it in this repository.
-
 ## Prerequisites
 
 To run this prebuilt project, you will need:
@@ -64,7 +62,7 @@ Note: The connection string expects the couchbases:// or couchbase:// part.
 ### Directly on machine
 At this point, we have installed the dependencies, loaded the travel-sample data and configured the application with the credentials. The application is now ready and you can run it.
 
-The application will run on a port specified by Rails. You can find the port in the terminal after running the application. You will find the Swagger documentation at http://localhost:3000/api-doc of the API if you go to the URL in your browser.
+The application will run on a port specified by Rails. You can find the port in the terminal after running the application. You will find the Swagger documentation at [http://localhost:3000/api-doc](http://localhost:3000/api-doc) of the API if you go to the URL in your browser.
 
 ```sh
 rails server
