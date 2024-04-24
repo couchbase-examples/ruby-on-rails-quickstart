@@ -7,7 +7,7 @@ Often, the first step developers take after creating their database is to create
 - How to create, read, update, and delete documents using Key-value operations (KV operations). Key-value operations are unique to Couchbase and provide super-fast (think microseconds) queries.
 - How to write simple parameterized SQL++ queries using the built-in travel-sample bucket.
 
-You can find the full documentation for the tutorial on the Couchbase Developer Portal.
+You can find the full documentation for the tutorial on the [Couchbase Developer Portal](https://www.couchbase.com/developers)
 
 ## Prerequisites
 
@@ -29,10 +29,13 @@ If travel-sample is not loaded in your Capella cluster, you can load it by follo
 We will walk through the different steps required to get the application running.
 
 ### Cloning Repo
+
 ```sh
 git clone https://github.com/couchbase-examples/ruby-on-rails-quickstart.git
 ```
+
 ### Install Dependencies
+
 Any dependencies will be installed by running the bundle install command, which installs any dependencies required for the project.
 
 ```sh
@@ -40,6 +43,7 @@ bundle install
 ```
 
 ### Setup Database Configuration
+
 To learn more about connecting to your Capella cluster, please follow the instructions.
 
 Specifically, you need to do the following:
@@ -55,30 +59,39 @@ DB_CONN_STR=<connection_string>
 DB_USERNAME=<user_with_read_write_permission_to_travel-sample_bucket>
 DB_PASSWORD=<password_for_user>
 ```
+
 Note: The connection string expects the couchbases:// or couchbase:// part.
 
 ## Running The Application
 
 ### Directly on machine
+
 At this point, we have installed the dependencies, loaded the travel-sample data and configured the application with the credentials. The application is now ready and you can run it.
 
-The application will run on a port specified by Rails. You can find the port in the terminal after running the application. You will find the Swagger documentation at [http://localhost:3000/api-doc](http://localhost:3000/api-doc) of the API if you go to the URL in your browser.
+The application will run on a port specified by Rails. You can find the port in the terminal after running the application. You will find the Swagger documentation at [http://localhost:3000/api-docs](http://localhost:3000/api-docs) of the API if you go to the URL in your browser.
 
 ```sh
 rails server
 ```
+
 ### Using Docker
+
 - Build the Docker image
+
 ```sh
 docker build -t couchbase-rails-quickstart .
 ```
+
 - Run the Docker image
+
 ```sh
 docker run -p 3000:3000 couchbase-rails-quickstart -e DB_CONN_STR=<connection_string> -e DB_USERNAME=<user_with_read_write_permission_to_travel-sample_bucket> -e DB_PASSWORD=<password_for_user>
 ```
+
 > Note: The dev.env.example file in the root folder has the connection information to connect to your Capella cluster. Create a copy of dev.env.example file and rename it to dev.env and add the values for the Couchbase connection.
 
 ## Verifying the Application
+
 Once the application starts, you can see the details of the application on the terminal.
 
 Show Image
@@ -88,6 +101,7 @@ The application will run on the port specified by Rails on your local machine (e
 Show Image
 
 ## Running The Tests
+
 Create a copy of dev.env.example file and rename it to dev.env and add the values for the Couchbase connection.
 
 ```sh
@@ -97,9 +111,11 @@ DB_PASSWORD=<password_for_user>
 ```
 
 ### Run the integration tests
+
 ```sh
 bundle exec rspec test/integration
 ```
+
 # Appendix
 
 ## Data Model
@@ -144,4 +160,3 @@ Execution: Once you've inputted all the necessary parameters, you can click the 
 ### Models
 
 Swagger documents the structure of request and response bodies using models. These models define the expected data structure using JSON schema and are extremely helpful in understanding what data to send and expect.
-
