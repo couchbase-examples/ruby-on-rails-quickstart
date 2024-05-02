@@ -94,11 +94,11 @@ docker run -p 3000:3000 couchbase-rails-quickstart -e DB_CONN_STR=<connection_st
 
 Once the application starts, you can see the details of the application on the terminal.
 
-Show Image
+![Application Start](./assets/images/app_startup.png)
 
 The application will run on the port specified by Rails on your local machine (eg: http://localhost:3000). You will find the interactive Swagger documentation of the API if you go to the URL in your browser. Swagger documentation is used in this demo to showcase the different API endpoints and how they can be invoked. More details on the Swagger documentation can be found in the appendix.
 
-Show Image
+![Swagger Documentation](./assets/images/swagger_documentation.png)
 
 ## Running The Tests
 
@@ -122,7 +122,7 @@ bundle exec rspec test/integration
 
 For this quickstart, we use three collections, airport, airline and routes that contain sample airports, airlines and airline routes respectively. The routes collection connects the airports and airlines as seen in the figure below. We use these connections in the quickstart to generate airports that are directly connected and airlines connecting to a destination airport. Note that these are just examples to highlight how you can use SQL++ queries to join the collections.
 
-![Data Model](image_link)
+![Data Model](./assets/images/travel_sample_data_model.png)
 
 ## Extending API by Adding New Entity
 
