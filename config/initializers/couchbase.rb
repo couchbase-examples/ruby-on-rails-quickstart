@@ -47,12 +47,37 @@ rescue Couchbase::Error::ScopeNotFoundError
   scope = bucket.scope('inventory')
 end
 
+begin
+  # create hotel search index
+  index_file_path = 'hotel_search_index.json'
+  index_content = File.read(index_file_path)
+  index_data = JSON.parse(index_content)
+  name = index_data["name"]
+  index = Couchbase::Management::SearchIndex.new
+  index.name= index_data["name"]
+  index.type= index_data["type"]
+  index.uuid= index_data["uuid"] if index_data.has_key?("uuid")
+  index.params= index_data["params"] if index_data.has_key?("params")
+  index.source_name= index_data["sourceName"] if index_data.has_key?("sourceName")
+  index.source_type= index_data["sourceType"] if index_data.has_key?("sourceType")
+  index.source_uuid= index_data["sourceUUID"] if index_data.has_key?("sourceUUID")
+  index.source_params= index_data["sourceParams"] if index_data.has_key?("sourceParams")
+  index.plan_params= index_data["planParams"] if index_data.has_key?("planParams")
+  scope.search_indexes.upsert_index(index)
+rescue StandardError => err
+  #puts err.full_message
+end
+
 %w[airline airport route].each do |collection_name|
   scope.collection(collection_name)
 rescue Couchbase::Error::CollectionNotFoundError
   scope.create_collection(collection_name)
 end
 
-AIRLINE_COLLECTION = scope.collection('airline')
-AIRPORT_COLLECTION = scope.collection('airport')
-ROUTE_COLLECTION = scope.collection('route')
+# Scope is declared as constant to run FTS queries
+INVENTORY_SCOPE = scope
+INDEX_NAME = name
+AIRLINE_COLLECTION = INVENTORY_SCOPE.collection('airline')
+AIRPORT_COLLECTION = INVENTORY_SCOPE.collection('airport')
+ROUTE_COLLECTION = INVENTORY_SCOPE.collection('route')
+HOTEL_COLLECTION = INVENTORY_SCOPE.collection('hotel')

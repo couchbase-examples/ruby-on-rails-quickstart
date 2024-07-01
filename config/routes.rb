@@ -35,6 +35,10 @@ Rails.application.routes.draw do
       post 'routes/:id', to: 'routes#create'
       put 'routes/:id', to: 'routes#update'
       delete 'routes/:id', to: 'routes#destroy'
+
+      #Hotel resource routes
+      get 'hotels/autocomplete', to: 'hotels#search'
+      post 'hotels/filter', to: 'hotels#filter'
     end
   end
 end
