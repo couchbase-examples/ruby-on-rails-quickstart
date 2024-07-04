@@ -12,6 +12,7 @@ jobs:
   run_tests:
     name: Run Tests
     runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'push' || github.event.pull_request.merged == false
     env:
       DB_CONN_STR: ${{ vars.DB_CONN_STR }}
       DB_USERNAME: ${{ vars.DB_USERNAME }}
