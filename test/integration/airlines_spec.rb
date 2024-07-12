@@ -178,7 +178,7 @@ RSpec.describe 'Airlines API', type: :request do
     end
 
     it 'returns a list of airlines for a given country' do
-      get '/api/v1/airlines/list', params: { country: country, limit: limit, offset: offset }
+      get '/api/v1/airlines/list', params: { country:, limit:, offset: }
 
       expect(response).to have_http_status(:ok)
       expect(response.content_type).to eq('application/json; charset=utf-8')
@@ -187,18 +187,11 @@ RSpec.describe 'Airlines API', type: :request do
   end
 
   describe 'GET /api/v1/airlines/to-airport' do
-    let(:destination_airport_code) { 'MRS' }
+    let(:destination_airport_code) { 'JFK' }
     let(:limit) { '10' }
     let(:offset) { '0' }
     let(:expected_airlines) do
       [
-        {
-          'callsign' => 'AIRFRANS',
-          'country' => 'France',
-          'iata' => 'AF',
-          'icao' => 'AFR',
-          'name' => 'Air France'
-        },
         {
           'callsign' => 'SPEEDBIRD',
           'country' => 'United Kingdom',
@@ -207,32 +200,18 @@ RSpec.describe 'Airlines API', type: :request do
           'name' => 'British Airways'
         },
         {
-          'callsign' => 'AIRLINAIR',
+          'callsign' => 'AIRFRANS',
           'country' => 'France',
-          'iata' => 'A5',
-          'icao' => 'RLA',
-          'name' => 'Airlinair'
+          'iata' => 'AF',
+          'icao' => 'AFR',
+          'name' => 'Air France'
         },
         {
-          'callsign' => 'STARWAY',
-          'country' => 'France',
-          'iata' => 'SE',
-          'icao' => 'SEU',
-          'name' => 'XL Airways France'
-        },
-        {
-          'callsign' => 'TWINJET',
-          'country' => 'France',
-          'iata' => 'T7',
-          'icao' => 'TJT',
-          'name' => 'Twin Jet'
-        },
-        {
-          'callsign' => 'EASY',
-          'country' => 'United Kingdom',
-          'iata' => 'U2',
-          'icao' => 'EZY',
-          'name' => 'easyJet'
+          'callsign' => 'DELTA',
+          'country' => 'United States',
+          'iata' => 'DL',
+          'icao' => 'DAL',
+          'name' => 'Delta Air Lines'
         },
         {
           'callsign' => 'AMERICAN',
@@ -242,11 +221,46 @@ RSpec.describe 'Airlines API', type: :request do
           'name' => 'American Airlines'
         },
         {
-          'callsign' => 'CORSICA',
-          'country' => 'France',
-          'iata' => 'XK',
-          'icao' => 'CCM',
-          'name' => 'Corse-Mediterranee'
+          'callsign' => 'HAWAIIAN',
+          'country' => 'United States',
+          'iata' => 'HA',
+          'icao' => 'HAL',
+          'name' => 'Hawaiian Airlines'
+        },
+        {
+          'callsign' => 'JETBLUE',
+          'country' => 'United States',
+          'iata' => 'B6',
+          'icao' => 'JBU',
+          'name' => 'JetBlue Airways'
+        },
+        {
+          'callsign' => 'FLAGSHIP',
+          'country' => 'United States',
+          'iata' => '9E',
+          'icao' => 'FLG',
+          'name' => 'Pinnacle Airlines'
+        },
+        {
+          'callsign' => 'SUN COUNTRY',
+          'country' => 'United States',
+          'iata' => 'SY',
+          'icao' => 'SCX',
+          'name' => 'Sun Country Airlines'
+        },
+        {
+          'callsign' => 'UNITED',
+          'country' => 'United States',
+          'iata' => 'UA',
+          'icao' => 'UAL',
+          'name' => 'United Airlines'
+        },
+        {
+          'callsign' => 'U S AIR',
+          'country' => 'United States',
+          'iata' => 'US',
+          'icao' => 'USA',
+          'name' => 'US Airways'
         }
       ]
     end
@@ -254,7 +268,7 @@ RSpec.describe 'Airlines API', type: :request do
     context 'when destinationAirportCode is provided' do
       it 'returns a list of airlines flying to the destination airport' do
         get '/api/v1/airlines/to-airport',
-            params: { destinationAirportCode: destination_airport_code, limit: limit, offset: offset }
+            params: { destinationAirportCode: destination_airport_code, limit:, offset: }
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to eq('application/json; charset=utf-8')
@@ -264,7 +278,7 @@ RSpec.describe 'Airlines API', type: :request do
 
     context 'when destinationAirportCode is not provided' do
       it 'returns a bad request error' do
-        get '/api/v1/airlines/to-airport', params: { limit: limit, offset: offset }
+        get '/api/v1/airlines/to-airport', params: { limit:, offset: }
 
         expect(response).to have_http_status(:bad_request)
         expect(JSON.parse(response.body)).to eq({ 'message' => 'Destination airport code is required' })
