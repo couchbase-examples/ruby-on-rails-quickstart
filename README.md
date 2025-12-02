@@ -15,8 +15,15 @@ To run this prebuilt project, you will need:
 
 - [Couchbase Capella cluster](https://www.couchbase.com/products/capella/) with [travel-sample bucket](https://docs.couchbase.com/ruby-sdk/current/ref/travel-app-data-model.html) loaded.
 - To run this tutorial using a [self-managed Couchbase cluster](https://docs.couchbase.com/capella/current/getting-started/self-managed-cluster.html), please refer to the appendix.
-- [Ruby 3.1.2](https://www.ruby-lang.org/en/documentation/installation/) is installed on the local machine.
+- [Ruby 3.4.1](https://www.ruby-lang.org/en/documentation/installation/) is installed on the local machine.
+- [rbenv](https://github.com/rbenv/rbenv) is recommended for managing Ruby versions (see Ruby-on-Rails-install.md for installation guide).
 - Basic knowledge of [Ruby](https://www.ruby-lang.org/en/documentation/), [Ruby on Rails](https://rubyonrails.org/), and [RSpec](https://rspec.info/).
+
+### Ruby Version Management
+
+This project uses Ruby 3.4.1. We recommend using rbenv for managing Ruby versions. The `.ruby-version` file in the repository root will automatically configure rbenv to use the correct Ruby version.
+
+If you don't have rbenv installed, see `Ruby-on-Rails-install.md` for detailed installation instructions.
 
 ## Loading Travel Sample Bucket
 
