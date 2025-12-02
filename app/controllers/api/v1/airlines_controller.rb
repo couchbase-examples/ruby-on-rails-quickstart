@@ -3,7 +3,6 @@
 module Api
   module V1
     class AirlinesController < ApplicationController
-      skip_before_action :verify_authenticity_token, only: %i[create update destroy]
       before_action :set_airline, only: %i[show update destroy]
 
       # GET /api/v1/airlines/{id}

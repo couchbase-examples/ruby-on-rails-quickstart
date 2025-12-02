@@ -28,8 +28,56 @@ jobs:
           ruby-version: 3.4.1
           bundler-cache: true
 
+      - name: Validate Couchbase Configuration
+        run: |
+          echo "Validating Couchbase environment variables..."
+
+          if [ -z "$DB_CONN_STR" ]; then
+            echo "::error::DB_CONN_STR environment variable is not set"
+            exit 1
+          fi
+
+          if [ -z "$DB_USERNAME" ]; then
+            echo "::error::DB_USERNAME environment variable is not set"
+            exit 1
+          fi
+
+          if [ -z "$DB_PASSWORD" ]; then
+            echo "::error::DB_PASSWORD secret is not set"
+            exit 1
+          fi
+
+          echo "✓ All Couchbase environment variables are configured"
+        env:
+          DB_CONN_STR: ${{ vars.DB_CONN_STR }}
+          DB_USERNAME: ${{ vars.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+      - name: Test Couchbase Connection
+        run: |
+          bundle exec rails runner '
+            begin
+              if defined?(COUCHBASE_CLUSTER) && COUCHBASE_CLUSTER
+                bucket = COUCHBASE_CLUSTER.bucket("travel-sample")
+                puts "✓ Successfully connected to Couchbase cluster"
+                puts "✓ Successfully accessed travel-sample bucket"
+              else
+                puts "✗ Couchbase cluster not initialized"
+                exit 1
+              end
+            rescue => e
+              puts "✗ Failed to connect to Couchbase: #{e.class.name} - #{e.message}"
+              exit 1
+            end
+          '
+        env:
+          DB_CONN_STR: ${{ vars.DB_CONN_STR }}
+          DB_USERNAME: ${{ vars.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          CI: true
+
       - name: Run tests
-        run: bundle exec rspec test/integration
+        run: bundle exec rspec spec/requests
 
       - name: Report Status
         if: always()

@@ -6,13 +6,45 @@ DB_PASSWORD = ENV['DB_PASSWORD']
 DB_CONN_STR = ENV['DB_CONN_STR']
 DB_BUCKET_NAME = 'travel-sample' # Hardcoded bucket name
 
+# Helper method to connect with retry logic for transient failures
+def connect_with_retry(max_attempts: 3, delay: 2)
+  attempts = 0
+  begin
+    attempts += 1
+    yield
+  rescue Couchbase::Error::Timeout,
+         Errno::ECONNREFUSED,
+         Errno::EHOSTUNREACH => e
+    if attempts < max_attempts
+      warn "Couchbase connection attempt #{attempts}/#{max_attempts} failed: #{e.message}. Retrying in #{delay}s..."
+      sleep delay
+      retry
+    else
+      raise
+    end
+  end
+end
+
+# Helper method to set all Couchbase constants to nil
+def set_couchbase_constants_to_nil
+  Object.const_set(:COUCHBASE_CLUSTER, nil) unless defined?(COUCHBASE_CLUSTER)
+  Object.const_set(:INVENTORY_SCOPE, nil) unless defined?(INVENTORY_SCOPE)
+  Object.const_set(:INDEX_NAME, nil) unless defined?(INDEX_NAME)
+  Object.const_set(:AIRLINE_COLLECTION, nil) unless defined?(AIRLINE_COLLECTION)
+  Object.const_set(:AIRPORT_COLLECTION, nil) unless defined?(AIRPORT_COLLECTION)
+  Object.const_set(:ROUTE_COLLECTION, nil) unless defined?(ROUTE_COLLECTION)
+  Object.const_set(:HOTEL_COLLECTION, nil) unless defined?(HOTEL_COLLECTION)
+end
+
 begin
   # Check if running in CI environment
   if ENV['CI']
-    # Use environment variables from GitHub Secrets
-    options = Couchbase::Cluster::ClusterOptions.new
-    options.authenticate(DB_USERNAME, DB_PASSWORD)
-    COUCHBASE_CLUSTER = Couchbase::Cluster.connect(DB_CONN_STR, options)
+    # Use environment variables from GitHub Secrets with retry logic
+    connect_with_retry do
+      options = Couchbase::Cluster::ClusterOptions.new
+      options.authenticate(DB_USERNAME, DB_PASSWORD)
+      COUCHBASE_CLUSTER = Couchbase::Cluster.connect(DB_CONN_STR, options)
+    end
   else
     # Load environment variables from dev.env file
     require 'dotenv'
@@ -82,15 +114,23 @@ begin
   AIRPORT_COLLECTION = INVENTORY_SCOPE.collection('airport')
   ROUTE_COLLECTION = INVENTORY_SCOPE.collection('route')
   HOTEL_COLLECTION = INVENTORY_SCOPE.collection('hotel')
-rescue StandardError => err
-  # Allow Rails to boot even if Couchbase is not reachable/misconfigured
-  warn_msg = "Couchbase initialization skipped: #{err.class}: #{err.message}"
-  defined?(Rails) ? Rails.logger.warn(warn_msg) : warn(warn_msg)
-  COUCHBASE_CLUSTER = nil
-  INVENTORY_SCOPE = nil
-  INDEX_NAME = nil
-  AIRLINE_COLLECTION = nil
-  AIRPORT_COLLECTION = nil
-  ROUTE_COLLECTION = nil
-  HOTEL_COLLECTION = nil
+rescue StandardError => e
+  error_message = "Couchbase initialization failed: #{e.class.name} - #{e.message}"
+
+  case defined?(Rails) ? Rails.env.to_s : (ENV['RAILS_ENV'] || 'development')
+  when 'test'
+    # In test environment, allow boot but log warning
+    # Tests will fail with CouchbaseUnavailableError from models
+    warn "\n#{'='*80}\n⚠️  WARNING: #{error_message}\n"
+    warn "Integration tests require Couchbase. See README.md for setup.\n#{'='*80}\n"
+    set_couchbase_constants_to_nil
+  when 'production'
+    # In production, fail fast - don't start without database
+    abort("FATAL: #{error_message}\nProduction requires a valid Couchbase connection.")
+  else
+    # Development: allow boot for convenience, log warning
+    warn "\n#{'='*80}\n⚠️  WARNING: #{error_message}\n"
+    warn "API endpoints will return 503. See README.md for setup.\n#{'='*80}\n"
+    set_couchbase_constants_to_nil
+  end
 end

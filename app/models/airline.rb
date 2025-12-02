@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Airline
+  include CouchbaseConnection
+
   attr_accessor :name, :iata, :icao, :callsign, :country
 
   def initialize(attributes)
@@ -12,6 +14,7 @@ class Airline
   end
 
   def self.find(id)
+    ensure_couchbase!
     result = AIRLINE_COLLECTION.get(id)
     new(result.content) if result.success?
   rescue Couchbase::Error::DocumentNotFound
@@ -19,6 +22,7 @@ class Airline
   end
 
   def self.all(country = nil, limit = 10, offset = 0)
+    ensure_couchbase!
     bucket_name = 'travel-sample'
     scope_name = 'inventory'
     collection_name = 'airline'
@@ -33,6 +37,7 @@ class Airline
   end
 
   def self.to_airport(destination_airport_code, limit = 10, offset = 0)
+    ensure_couchbase!
     bucket_name = 'travel-sample'
     scope_name = 'inventory'
     route_collection_name = 'route'
@@ -58,6 +63,7 @@ class Airline
   end
 
   def self.create(id, attributes)
+    ensure_couchbase!
     required_fields = %w[name iata icao callsign country]
     missing_fields = required_fields - attributes.keys
     extra_fields = attributes.keys - required_fields
@@ -78,6 +84,7 @@ class Airline
   end
 
   def update(id, attributes)
+    self.class.ensure_couchbase!
     required_fields = %w[name iata icao callsign country]
     missing_fields = required_fields - attributes.keys
     extra_fields = attributes.keys - required_fields
@@ -98,6 +105,7 @@ class Airline
   end
 
   def destroy(id)
+    self.class.ensure_couchbase!
     AIRLINE_COLLECTION.remove(id)
   end
 end

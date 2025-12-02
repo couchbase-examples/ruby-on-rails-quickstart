@@ -1,4 +1,6 @@
 class Route
+  include CouchbaseConnection
+
   attr_accessor :airline, :airlineid, :sourceairport, :destinationairport, :stops, :equipment, :schedule, :distance
 
   def initialize(attributes)
@@ -19,6 +21,7 @@ class Route
   end
 
   def self.find(id)
+    ensure_couchbase!
     result = ROUTE_COLLECTION.get(id)
     new(result.content) if result.success?
   rescue Couchbase::Error::DocumentNotFound
@@ -26,6 +29,7 @@ class Route
   end
 
   def self.create(id, attributes)
+    ensure_couchbase!
     required_fields = %w[airline airlineid sourceairport destinationairport stops equipment distance]
     missing_fields = required_fields - attributes.keys
     extra_fields = attributes.keys - (required_fields + ['schedule'])
@@ -57,6 +61,7 @@ class Route
   end
 
   def update(id, attributes)
+    self.class.ensure_couchbase!
     required_fields = %w[airline airlineid sourceairport destinationairport stops equipment distance]
     missing_fields = required_fields - attributes.keys
     extra_fields = attributes.keys - (required_fields + ['schedule'])
@@ -88,6 +93,7 @@ class Route
   end
 
   def destroy(id)
+    self.class.ensure_couchbase!
     ROUTE_COLLECTION.remove(id)
     true
   rescue Couchbase::Error::DocumentNotFound

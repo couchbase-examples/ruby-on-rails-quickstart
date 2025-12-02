@@ -120,8 +120,120 @@ DB_PASSWORD=<password_for_user>
 ### Run the integration tests
 
 ```sh
-bundle exec rspec test/integration
+bundle exec rspec spec/requests
 ```
+
+## Troubleshooting
+
+### Integration Tests Failing with "undefined method 'get' for nil"
+
+This error means Couchbase is not properly initialized. Follow these steps:
+
+#### 1. Verify Environment Variables
+
+For local development, ensure `dev.env` file exists in project root:
+
+```bash
+cat dev.env
+```
+
+Should contain:
+```
+DB_CONN_STR="couchbases://cb.hlcup4o4jmjr55yf.cloud.couchbase.com"
+DB_USERNAME="your-username"
+DB_PASSWORD="your-password"
+```
+
+#### 2. Verify Couchbase Connection
+
+Test the connection:
+```bash
+bundle exec rails runner 'puts COUCHBASE_CLUSTER ? "✓ Connected" : "✗ Not connected"'
+```
+
+#### 3. Verify travel-sample Bucket
+
+The application requires the `travel-sample` bucket with:
+- **Scope:** `inventory`
+- **Collections:** `airline`, `airport`, `route`, `hotel`
+
+For Couchbase Capella:
+1. Log into Capella console
+2. Navigate to your cluster
+3. Check Buckets > travel-sample exists
+4. Verify inventory scope and collections exist
+
+#### 4. Check Permissions
+
+The database user needs:
+- Read/Write access to `travel-sample` bucket
+- Query permissions for N1QL queries
+- Search permissions for FTS operations
+
+#### 5. Verify Network Access (Capella Only)
+
+For Couchbase Capella:
+1. Go to Settings > Allowed IP Addresses
+2. Add your IP address or `0.0.0.0/0` for testing
+3. Ensure cluster is not paused
+
+### CI Tests Failing
+
+Check GitHub repository configuration:
+
+1. **Secrets** (Settings > Secrets and variables > Actions > Secrets):
+   - `DB_PASSWORD` - Your Couchbase password
+
+2. **Variables** (Settings > Secrets and variables > Actions > Variables):
+   - `DB_CONN_STR` - Your Couchbase connection string
+   - `DB_USERNAME` - Your Couchbase username
+
+3. **Capella IP Allowlist**:
+   - GitHub Actions runners use dynamic IPs
+   - Temporarily allow `0.0.0.0/0` or use Capella's "Allow All IPs" option
+
+### Common Errors
+
+**Error:** `Couchbase::Error::AuthenticationFailure`
+- **Solution:** Check username/password in `dev.env` or GitHub Secrets
+
+**Error:** `Couchbase::Error::BucketNotFound`
+- **Solution:** Ensure `travel-sample` bucket is created and loaded
+
+**Error:** `Couchbase::Error::Timeout`
+- **Solution:** Check network connectivity, verify connection string uses correct protocol (`couchbase://` for local, `couchbases://` for Capella)
+
+**Error:** `Couchbase::Error::ScopeNotFound` or `CollectionNotFound`
+- **Solution:** The initializer auto-creates scope/collections, but user needs create permissions
+
+### Health Check Endpoint
+
+Check application health:
+```bash
+curl http://localhost:3000/api/v1/health
+```
+
+Response shows Couchbase status:
+```json
+{
+  "status": "healthy",
+  "timestamp": "2025-12-02T10:30:00Z",
+  "services": {
+    "couchbase": {
+      "status": "up",
+      "message": "Connected to travel-sample bucket"
+    }
+  }
+}
+```
+
+### Getting Help
+
+If issues persist:
+1. Check application logs for detailed error messages
+2. Verify Ruby version matches `.ruby-version` (3.4.1)
+3. Run `bundle install` to ensure all gems are current
+4. Check Couchbase SDK compatibility
 
 # Appendix
 

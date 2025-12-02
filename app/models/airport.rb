@@ -1,4 +1,6 @@
 class Airport
+  include CouchbaseConnection
+
   attr_accessor :airportname, :city, :country, :faa, :icao, :tz, :geo
 
   def initialize(attributes)
@@ -16,6 +18,7 @@ class Airport
   end
 
   def self.find(id)
+    ensure_couchbase!
     result = AIRPORT_COLLECTION.get(id)
     new(result.content) if result.success?
   rescue Couchbase::Error::DocumentNotFound
@@ -23,6 +26,7 @@ class Airport
   end
 
   def self.create(id, attributes)
+    ensure_couchbase!
     required_fields = %w[airportname city country faa icao tz geo]
     missing_fields = required_fields - attributes.keys
     extra_fields = attributes.keys - (required_fields + ['geo'])
@@ -52,6 +56,7 @@ class Airport
   end
 
   def update(id, attributes)
+    self.class.ensure_couchbase!
     required_fields = %w[airportname city country faa icao tz geo]
     missing_fields = required_fields - attributes.keys
     extra_fields = attributes.keys - (required_fields + ['geo'])
@@ -81,6 +86,7 @@ class Airport
   end
 
   def destroy(id)
+    self.class.ensure_couchbase!
     AIRPORT_COLLECTION.remove(id)
     true
   rescue Couchbase::Error::DocumentNotFound
@@ -88,6 +94,7 @@ class Airport
   end
 
   def self.direct_connections(destination_airport_code, limit = 10, offset = 0)
+    ensure_couchbase!
     bucket_name = 'travel-sample'
     scope_name = 'inventory'
     route_collection_name = 'route'
