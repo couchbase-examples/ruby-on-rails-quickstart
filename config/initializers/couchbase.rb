@@ -23,15 +23,15 @@ begin
     DEFAULT_DB_PASSWORD = 'password'
     DEFAULT_DB_CONN_STR = 'couchbase://localhost'
 
-    # Get environment variables with fallback to default values
-    DB_USERNAME = ENV.fetch('DB_USERNAME', DEFAULT_DB_USERNAME)
-    DB_PASSWORD = ENV.fetch('DB_PASSWORD', DEFAULT_DB_PASSWORD)
-    DB_CONN_STR = ENV.fetch('DB_CONN_STR', DEFAULT_DB_CONN_STR)
+    # Get environment variables with fallback to default values (using local variables)
+    db_username = ENV.fetch('DB_USERNAME', DEFAULT_DB_USERNAME)
+    db_password = ENV.fetch('DB_PASSWORD', DEFAULT_DB_PASSWORD)
+    db_conn_str = ENV.fetch('DB_CONN_STR', DEFAULT_DB_CONN_STR)
 
     # Connect to the Couchbase cluster
     options = Couchbase::Cluster::ClusterOptions.new
-    options.authenticate(DB_USERNAME, DB_PASSWORD)
-    COUCHBASE_CLUSTER = Couchbase::Cluster.connect(DB_CONN_STR, options)
+    options.authenticate(db_username, db_password)
+    COUCHBASE_CLUSTER = Couchbase::Cluster.connect(db_conn_str, options)
   end
 
   # Open the bucket

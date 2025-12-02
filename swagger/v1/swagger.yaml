@@ -443,7 +443,7 @@ paths:
           description: bad request
   "/api/v1/hotels/autocomplete":
     get:
-      summary: Retrieve suggestion for Hotel names
+      summary: Retrieve suggestions for Hotel names
       tags:
       - Hotels
       parameters:
@@ -454,7 +454,7 @@ paths:
           type: string
       responses:
         '200':
-          description: No suggestion
+          description: List of hotel name suggestions
           content:
             application/json:
               schema:
@@ -469,7 +469,7 @@ paths:
       parameters: []
       responses:
         '200':
-          description: only one Hotels found
+          description: List of hotels matching the filter criteria
           content:
             application/json:
               schema:
