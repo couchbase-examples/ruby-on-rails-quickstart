@@ -18,6 +18,7 @@ jobs:
       DB_CONN_STR: ${{ vars.DB_CONN_STR }}
       DB_USERNAME: ${{ vars.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      CI: true
       
     steps:
       - name: Checkout code
@@ -48,10 +49,6 @@ jobs:
           fi
 
           echo "✓ All Couchbase environment variables are configured"
-        env:
-          DB_CONN_STR: ${{ vars.DB_CONN_STR }}
-          DB_USERNAME: ${{ vars.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
       - name: Test Couchbase Connection
         run: |
@@ -70,22 +67,12 @@ jobs:
               exit 1
             end
           '
-        env:
-          DB_CONN_STR: ${{ vars.DB_CONN_STR }}
-          DB_USERNAME: ${{ vars.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          CI: true
 
       - name: Run integration tests
         run: bundle exec rspec spec/requests/api/v1
 
       - name: Verify Swagger documentation generates
         run: bundle exec rake rswag:specs:swaggerize
-        env:
-          DB_CONN_STR: ${{ vars.DB_CONN_STR }}
-          DB_USERNAME: ${{ vars.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          CI: true
 
       - name: Report Status
         if: always()
