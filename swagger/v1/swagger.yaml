@@ -441,6 +441,79 @@ paths:
                   type: string
         '400':
           description: bad request
+  "/api/v1/hotels/autocomplete":
+    get:
+      summary: Retrieve suggestions for Hotel names
+      tags:
+      - Hotels
+      parameters:
+      - name: name
+        in: query
+        description: name of the hotel
+        schema:
+          type: string
+      responses:
+        '200':
+          description: List of hotel name suggestions
+          content:
+            application/json:
+              schema:
+                type: Array
+                items:
+                  type: string
+  "/api/v1/hotels/filter":
+    post:
+      summary: Hotel search filter
+      tags:
+      - Hotels
+      parameters: []
+      responses:
+        '200':
+          description: List of hotels matching the filter criteria
+          content:
+            application/json:
+              schema:
+                type: Array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    country:
+                      type: string
+                    city:
+                      type: string
+                      nullable: true
+                    state:
+                      type: string
+                      nullable: true
+                  required:
+                  - name
+                  - title
+                  - description
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                title:
+                  type: string
+                description:
+                  type: string
+                country:
+                  type: string
+                city:
+                  type: string
+                state:
+                  type: string
+        description: hotel filter
   "/api/v1/routes/{id}":
     get:
       summary: Retrieves a route by ID
@@ -619,10 +692,7 @@ paths:
         '404':
           description: route not found
 servers:
-- url: http://{defaultHost}
-  variables:
-    defaultHost:
-      default: localhost:3000
+- url: "/"
 components:
   schemas:
     Airline:

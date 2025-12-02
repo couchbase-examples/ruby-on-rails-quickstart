@@ -3,7 +3,6 @@
 module Api
   module V1
     class RoutesController < ApplicationController
-      skip_before_action :verify_authenticity_token, only: %i[create update destroy]
       before_action :set_route, only: %i[show update destroy]
 
       # GET /api/v1/routes/{id}

@@ -2,7 +2,7 @@ require 'swagger_helper'
 
 describe 'Hotels API', type: :request do
   path '/api/v1/hotels/autocomplete' do
-    get 'Retrieve suggestion for Hotel names' do
+    get 'Retrieve suggestions for Hotel names' do
       tags 'Hotels'
       produces 'application/json'
       parameter name: :name, in: :query, type: :string, description: 'name of the hotel'
@@ -19,7 +19,7 @@ describe 'Hotels API', type: :request do
         end
       end
 
-      response '200', 'No suggestion' do
+      response '200', 'List of hotel name suggestions' do
         schema type: :Array,
                items: {
                  type: :string
@@ -70,7 +70,7 @@ describe 'Hotels API', type: :request do
           expect(data.length()).to be >(0)
         end
       end
-      response '200', 'only one Hotels found' do
+      response '200', 'List of hotels matching the filter criteria' do
         schema type: :Array,
                items: {
                  type: :object,
@@ -90,7 +90,7 @@ describe 'Hotels API', type: :request do
           expect(data.length()).to eq(1)
         end
       end
-      response '200', 'only one Hotels found' do
+      response '200', 'List of hotels matching the filter criteria' do
         schema type: :Array,
                items: {
                  type: :object,

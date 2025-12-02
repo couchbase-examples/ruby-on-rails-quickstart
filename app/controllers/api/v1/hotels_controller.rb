@@ -3,11 +3,10 @@
 module Api
     module V1
         class HotelsController < ApplicationController
-            skip_before_action :verify_authenticity_token, only: %i[search filter]
             before_action :validate_query_params, only: [:search]
             # GET /api/v1/hotels/autocomplete
             def search
-                @hotels = HotelSearch.search_name(params[:name])
+                @hotels = Hotel.search_name(params[:name])
                 render json: @hotels, status: :ok
             rescue StandardError => e
                 render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
@@ -15,22 +14,22 @@ module Api
 
             # GET /api/v1/hotels/filter
             def filter
-                @hotels = HotelSearch.filter(HotelSearch.new(
+                @hotels = Hotel.filter(Hotel.new(
                   {
-                    "name"=> hotel_search_params[:name],
-                    "title" => hotel_search_params[:title],
-                    "description" => hotel_search_params[:description],
-                    "country" => hotel_search_params[:country],
-                    "city" => hotel_search_params[:city],
-                    "state" => hotel_search_params[:state]
+                    "name"=> hotel_params[:name],
+                    "title" => hotel_params[:title],
+                    "description" => hotel_params[:description],
+                    "country" => hotel_params[:country],
+                    "city" => hotel_params[:city],
+                    "state" => hotel_params[:state]
                   }
-                ), hotel_search_params[:offset],  hotel_search_params[:limit])
+                ), hotel_params[:offset],  hotel_params[:limit])
                 render json: @hotels, status: :ok
             rescue StandardError => e
                 render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
             end
 
-            def hotel_search_params
+            def hotel_params
                 params.require(:hotel).permit(:name, :title, :description, :country, :city, :state, :offset, :limit)
             end
 
