@@ -33,12 +33,16 @@ describe 'Routes API', type: :request do
                             distance]
 
         let(:id) { 'route_10209' }
-        run_test!
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/routes_spec.rb
+        end
       end
 
       response '404', 'route not found' do
         let(:id) { 'invalid_id' }
-        run_test!
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/routes_spec.rb
+        end
       end
     end
 
@@ -73,6 +77,7 @@ describe 'Routes API', type: :request do
       }
 
       response '201', 'route created' do
+        let(:id) { 'route_new_123' }
         let(:route) do
           {
             airline: 'AF',
@@ -88,10 +93,13 @@ describe 'Routes API', type: :request do
             distance: 2881.617376098415
           }
         end
-        run_test!
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/routes_spec.rb
+        end
       end
 
       response '400', 'bad request' do
+        let(:id) { 'route_bad' }
         let(:route) do
           {
             airline: 'AF',
@@ -107,10 +115,13 @@ describe 'Routes API', type: :request do
             distance: 2881.617376098415
           }
         end
-        run_test!
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/routes_spec.rb
+        end
       end
 
       response '409', 'route already exists' do
+        let(:id) { 'route_10209' }
         let(:route) do
           {
             airline: 'AF',
@@ -126,7 +137,9 @@ describe 'Routes API', type: :request do
             distance: 2881.617376098415
           }
         end
-        run_test!
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/routes_spec.rb
+        end
       end
     end
 
@@ -160,14 +173,18 @@ describe 'Routes API', type: :request do
 
       response '200', 'route updated' do
         let(:id) { 'route_10209' }
-        let(:route) { { stops: 1 } }
-        run_test!
+        let(:route) { { airline: 'AF', airlineid: 'airline_137', sourceairport: 'TLV', destinationairport: 'MRS', stops: 1, equipment: '330', schedule: [{ day: 1, utc: '11:00:00', flight: 'AF199' }], distance: 150.0 } }
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/routes_spec.rb
+        end
       end
 
       response '400', 'bad request' do
         let(:id) { 'route_10209' }
         let(:route) { { stops: 'invalid' } }
-        run_test!
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/routes_spec.rb
+        end
       end
     end
 
@@ -176,13 +193,17 @@ describe 'Routes API', type: :request do
       parameter name: :id, in: :path, type: :string, description: 'ID of the route'
 
       response '204', 'route deleted' do
-        let(:id) { 'route_10209' }
-        run_test!
+        let(:id) { 'route_to_delete' }
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/routes_spec.rb
+        end
       end
 
       response '404', 'route not found' do
         let(:id) { 'invalid_id' }
-        run_test!
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/routes_spec.rb
+        end
       end
     end
   end

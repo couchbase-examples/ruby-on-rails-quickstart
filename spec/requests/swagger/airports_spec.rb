@@ -28,12 +28,16 @@ describe 'Airports API', type: :request do
                required: %w[airportname city country faa icao tz geo]
 
         let(:id) { 'airport_1262' }
-        run_test!
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/airports_spec.rb
+        end
       end
 
       response '404', 'airport not found' do
         let(:id) { 'invalid_id' }
-        run_test!
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/airports_spec.rb
+        end
       end
     end
 
@@ -63,6 +67,7 @@ describe 'Airports API', type: :request do
       }
 
       response '201', 'airport created' do
+        let(:id) { 'airport_new_123' }
         let(:airport) do
           {
             airportname: 'Test Airport',
@@ -78,10 +83,13 @@ describe 'Airports API', type: :request do
             }
           }
         end
-        run_test!
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/airports_spec.rb
+        end
       end
 
       response '400', 'bad request' do
+        let(:id) { 'airport_bad' }
         let(:airport) do
           {
             airportname: 'Test Airport',
@@ -96,10 +104,13 @@ describe 'Airports API', type: :request do
             }
           }
         end
-        run_test!
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/airports_spec.rb
+        end
       end
 
       response '409', 'airport already exists' do
+        let(:id) { 'airport_1262' }
         let(:airport) do
           {
             airportname: 'Test Airport',
@@ -115,7 +126,9 @@ describe 'Airports API', type: :request do
             }
           }
         end
-        run_test!
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/airports_spec.rb
+        end
       end
     end
 
@@ -145,14 +158,18 @@ describe 'Airports API', type: :request do
 
       response '200', 'airport updated' do
         let(:id) { 'airport_1262' }
-        let(:airport) { { airportname: 'Updated Airport' } }
-        run_test!
+        let(:airport) { { airportname: 'Updated Airport', city: 'Updated City', country: 'Updated Country', faa: 'UPD', icao: 'UPDT', tz: 'America/New_York', geo: { lat: 1.0, lon: 1.0, alt: 100.0 } } }
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/airports_spec.rb
+        end
       end
 
       response '400', 'bad request' do
         let(:id) { 'airport_1262' }
         let(:airport) { { airportname: '' } }
-        run_test!
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/airports_spec.rb
+        end
       end
     end
 
@@ -161,13 +178,17 @@ describe 'Airports API', type: :request do
       parameter name: :id, in: :path, type: :string, description: 'ID of the airport'
 
       response '204', 'airport deleted' do
-        let(:id) { 'airport_1262' }
-        run_test!
+        let(:id) { 'airport_to_delete' }
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/airports_spec.rb
+        end
       end
 
       response '404', 'airport not found' do
         let(:id) { 'invalid_id' }
-        run_test!
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/airports_spec.rb
+        end
       end
     end
   end
@@ -190,12 +211,18 @@ describe 'Airports API', type: :request do
         let(:destinationAirportCode) { 'LAX' }
         let(:limit) { 10 }
         let(:offset) { 0 }
-        run_test!
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/airports_spec.rb
+        end
       end
 
       response '400', 'bad request' do
         let(:destinationAirportCode) { '' }
-        run_test!
+        let(:limit) { 10 }
+        let(:offset) { 0 }
+        run_test! do |response|
+          # Documentation-only - actual testing done in spec/requests/api/v1/airports_spec.rb
+        end
       end
     end
   end

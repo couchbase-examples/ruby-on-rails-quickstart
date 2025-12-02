@@ -76,8 +76,16 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           CI: true
 
-      - name: Run tests
-        run: bundle exec rspec spec/requests
+      - name: Run integration tests
+        run: bundle exec rspec spec/requests/api/v1
+
+      - name: Verify Swagger documentation generates
+        run: bundle exec rake rswag:specs:swaggerize
+        env:
+          DB_CONN_STR: ${{ vars.DB_CONN_STR }}
+          DB_USERNAME: ${{ vars.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          CI: true
 
       - name: Report Status
         if: always()
