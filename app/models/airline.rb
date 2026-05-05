@@ -28,9 +28,8 @@ class Airline
     collection_name = 'airline'
 
     query = country ? "SELECT * FROM `#{bucket_name}`.`#{scope_name}`.`#{collection_name}` WHERE country = $country LIMIT $limit OFFSET $offset" : "SELECT * FROM `#{bucket_name}`.`#{scope_name}`.`#{collection_name}` LIMIT $limit OFFSET $offset"
-    options = Couchbase::Cluster::QueryOptions.new
-    options.named_parameters(country ? { 'country' => country, 'limit' => limit.to_i,
-                                         'offset' => offset.to_i } : { 'limit' => limit.to_i, 'offset' => offset.to_i })
+    options = Couchbase::Options::Query(named_parameters: country ? { 'country' => country, 'limit' => limit.to_i,
+                                                                      'offset' => offset.to_i } : { 'limit' => limit.to_i, 'offset' => offset.to_i })
 
     result = COUCHBASE_CLUSTER.query(query, options)
     result.rows.map { |row| new(row.fetch('airline', {})) }.to_a
@@ -52,11 +51,12 @@ class Airline
             WHERE route.destinationairport = $airport) AS subquery
       JOIN `#{bucket_name}`.`#{scope_name}`.`#{airline_collection_name}` AS air
       ON META(air).id = subquery.airlineId
+      ORDER BY air.name ASC
       LIMIT $limit OFFSET $offset
     "
 
-    options = Couchbase::Cluster::QueryOptions.new
-    options.named_parameters({ 'airport' => destination_airport_code, 'limit' => limit.to_i, 'offset' => offset.to_i })
+    options = Couchbase::Options::Query(named_parameters: { 'airport' => destination_airport_code, 'limit' => limit.to_i,
+                                                            'offset' => offset.to_i })
 
     result = COUCHBASE_CLUSTER.query(query, options)
     result.rows.map { |row| new(row) }

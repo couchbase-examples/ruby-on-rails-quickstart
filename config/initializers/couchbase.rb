@@ -41,7 +41,7 @@ begin
   if ENV['CI']
     # Use environment variables from GitHub Secrets with retry logic
     connect_with_retry do
-      options = Couchbase::Cluster::ClusterOptions.new
+      options = Couchbase::Options::Cluster.new
       options.authenticate(DB_USERNAME, DB_PASSWORD)
       COUCHBASE_CLUSTER = Couchbase::Cluster.connect(DB_CONN_STR, options)
     end
@@ -61,7 +61,7 @@ begin
     db_conn_str = ENV.fetch('DB_CONN_STR', DEFAULT_DB_CONN_STR)
 
     # Connect to the Couchbase cluster
-    options = Couchbase::Cluster::ClusterOptions.new
+    options = Couchbase::Options::Cluster.new
     options.authenticate(db_username, db_password)
     COUCHBASE_CLUSTER = Couchbase::Cluster.connect(db_conn_str, options)
   end

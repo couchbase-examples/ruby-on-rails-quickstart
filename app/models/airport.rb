@@ -110,12 +110,11 @@ class Airport
       LIMIT $limit OFFSET $offset
     "
 
-    options = Couchbase::Cluster::QueryOptions.new
-    options.named_parameters({
-                               'destinationAirportCode' => destination_airport_code,
-                               'limit' => limit.to_i,
-                               'offset' => offset.to_i
-                             })
+    options = Couchbase::Options::Query(named_parameters: {
+                                          'destinationAirportCode' => destination_airport_code,
+                                          'limit' => limit.to_i,
+                                          'offset' => offset.to_i
+                                        })
 
     result = COUCHBASE_CLUSTER.query(query, options)
     result.rows.map { |row| row['destinationairport'] }
