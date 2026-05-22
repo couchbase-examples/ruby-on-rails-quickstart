@@ -193,13 +193,6 @@ RSpec.describe 'Airlines API', type: :request do
     let(:expected_airlines) do
       [
         {
-          'callsign' => 'SPEEDBIRD',
-          'country' => 'United Kingdom',
-          'iata' => 'BA',
-          'icao' => 'BAW',
-          'name' => 'British Airways'
-        },
-        {
           'callsign' => 'AIRFRANS',
           'country' => 'France',
           'iata' => 'AF',
@@ -207,18 +200,25 @@ RSpec.describe 'Airlines API', type: :request do
           'name' => 'Air France'
         },
         {
-          'callsign' => 'DELTA',
-          'country' => 'United States',
-          'iata' => 'DL',
-          'icao' => 'DAL',
-          'name' => 'Delta Air Lines'
-        },
-        {
           'callsign' => 'AMERICAN',
           'country' => 'United States',
           'iata' => 'AA',
           'icao' => 'AAL',
           'name' => 'American Airlines'
+        },
+        {
+          'callsign' => 'SPEEDBIRD',
+          'country' => 'United Kingdom',
+          'iata' => 'BA',
+          'icao' => 'BAW',
+          'name' => 'British Airways'
+        },
+        {
+          'callsign' => 'DELTA',
+          'country' => 'United States',
+          'iata' => 'DL',
+          'icao' => 'DAL',
+          'name' => 'Delta Air Lines'
         },
         {
           'callsign' => 'HAWAIIAN',
@@ -249,18 +249,18 @@ RSpec.describe 'Airlines API', type: :request do
           'name' => 'Sun Country Airlines'
         },
         {
-          'callsign' => 'UNITED',
-          'country' => 'United States',
-          'iata' => 'UA',
-          'icao' => 'UAL',
-          'name' => 'United Airlines'
-        },
-        {
           'callsign' => 'U S AIR',
           'country' => 'United States',
           'iata' => 'US',
           'icao' => 'USA',
           'name' => 'US Airways'
+        },
+        {
+          'callsign' => 'UNITED',
+          'country' => 'United States',
+          'iata' => 'UA',
+          'icao' => 'UAL',
+          'name' => 'United Airlines'
         }
       ]
     end
