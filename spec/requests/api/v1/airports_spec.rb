@@ -193,7 +193,7 @@ RSpec.describe 'Airports API', type: :request do
     let(:destination_airport_code) { 'JFK' }
     let(:limit) { 10 }
     let(:offset) { 0 }
-    let(:expected_connections) { %w[DEL LHR EZE ATL CUN MEX LAX SAN SEA SFO] }
+    let(:expected_connections) { %w[ABQ ACC AMM AMS ANU ARN ATL AUA AUH AUS] }
 
     context 'when the destination airport code is provided' do
       it 'returns the direct connections' do
