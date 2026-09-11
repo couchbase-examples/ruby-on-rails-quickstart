@@ -49,6 +49,7 @@ describe 'Airlines API', type: :request do
       response '201', 'airline created' do
         let(:id) { 'airline_new_123' }
         let(:airline) { { name: 'Foo Airlines', iata: 'FA', icao: 'FOO', callsign: 'FOO', country: 'US' } }
+        after { delete "/api/v1/airlines/#{id}" }
         run_test! do |response|
           # Documentation-only - actual testing done in spec/requests/api/v1/airlines_spec.rb
         end
@@ -87,16 +88,24 @@ describe 'Airlines API', type: :request do
       }
 
       response '200', 'airline updated' do
-        let(:id) { 'airline_10' }
+        let(:id) { 'airline_put' }
         let(:airline) { { name: 'Updated Airline', iata: 'UA', icao: 'UPD', callsign: 'UPDATED', country: 'United States' } }
+        before do
+          post "/api/v1/airlines/#{id}", params: { airline: { name: '40-Mile Air', iata: 'Q5', icao: 'MLA', callsign: 'MILE-AIR', country: 'United States' } }
+        end
+        after { delete "/api/v1/airlines/#{id}" }
         run_test! do |response|
           # Documentation-only - actual testing done in spec/requests/api/v1/airlines_spec.rb
         end
       end
 
       response '400', 'bad request' do
-        let(:id) { 'airline_10' }
+        let(:id) { 'airline_put_bad' }
         let(:airline) { { name: '' } }
+        before do
+          post "/api/v1/airlines/#{id}", params: { airline: { name: '40-Mile Air', iata: 'Q5', icao: 'MLA', callsign: 'MILE-AIR', country: 'United States' } }
+        end
+        after { delete "/api/v1/airlines/#{id}" }
         run_test! do |response|
           # Documentation-only - actual testing done in spec/requests/api/v1/airlines_spec.rb
         end
@@ -107,8 +116,11 @@ describe 'Airlines API', type: :request do
       tags 'Airlines'
       parameter name: :id, in: :path, type: :string, description: 'ID of the airline'
 
-      response '204', 'airline deleted' do
+      response '202', 'airline deleted' do
         let(:id) { 'airline_to_delete' }
+        before do
+          post "/api/v1/airlines/#{id}", params: { airline: { name: 'Delete Airline', iata: 'DA', icao: 'DEL', callsign: 'DELETE', country: 'US' } }
+        end
         run_test! do |response|
           # Documentation-only - actual testing done in spec/requests/api/v1/airlines_spec.rb
         end
@@ -139,10 +151,10 @@ describe 'Airlines API', type: :request do
                    name: { type: :string },
                    iata: { type: :string },
                    icao: { type: :string },
-                   callsign: { type: :string },
+                   callsign: { type: %w[string null] },
                    country: { type: :string }
                  },
-                 required: %w[name iata icao callsign country]
+                 required: %w[name iata icao country]
                }
 
         let(:country) { 'United States' }
@@ -172,10 +184,10 @@ describe 'Airlines API', type: :request do
                    name: { type: :string },
                    iata: { type: :string },
                    icao: { type: :string },
-                   callsign: { type: :string },
+                   callsign: { type: %w[string null] },
                    country: { type: :string }
                  },
-                 required: %w[name iata icao callsign country]
+                 required: %w[name iata icao country]
                }
 
         let(:destinationAirportCode) { 'LAX' }

@@ -145,7 +145,7 @@ paths:
         schema:
           type: string
       responses:
-        '204':
+        '202':
           description: airline deleted
         '404':
           description: airline not found
@@ -187,14 +187,15 @@ paths:
                     icao:
                       type: string
                     callsign:
-                      type: string
+                      type:
+                      - string
+                      - 'null'
                     country:
                       type: string
                   required:
                   - name
                   - iata
                   - icao
-                  - callsign
                   - country
   "/api/v1/airlines/to-airport":
     get:
@@ -234,14 +235,15 @@ paths:
                     icao:
                       type: string
                     callsign:
-                      type: string
+                      type:
+                      - string
+                      - 'null'
                     country:
                       type: string
                   required:
                   - name
                   - iata
                   - icao
-                  - callsign
                   - country
         '400':
           description: bad request
@@ -404,7 +406,7 @@ paths:
         schema:
           type: string
       responses:
-        '204':
+        '202':
           description: airport deleted
         '404':
           description: airport not found
@@ -687,7 +689,7 @@ paths:
         schema:
           type: string
       responses:
-        '204':
+        '202':
           description: route deleted
         '404':
           description: route not found

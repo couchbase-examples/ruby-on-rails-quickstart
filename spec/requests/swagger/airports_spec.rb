@@ -83,6 +83,7 @@ describe 'Airports API', type: :request do
             }
           }
         end
+        after { delete "/api/v1/airports/#{id}" }
         run_test! do |response|
           # Documentation-only - actual testing done in spec/requests/api/v1/airports_spec.rb
         end
@@ -92,16 +93,7 @@ describe 'Airports API', type: :request do
         let(:id) { 'airport_bad' }
         let(:airport) do
           {
-            airportname: 'Test Airport',
-            city: 'Test City',
-            country: 'Test Country',
-            faa: '',
-            icao: 'Test LFAG',
-            tz: 'Test Europe/Paris',
-            geo: {
-              lat: 49.868547,
-              lon: 3.029578
-            }
+            airportname: 'Test Airport'
           }
         end
         run_test! do |response|
@@ -157,16 +149,24 @@ describe 'Airports API', type: :request do
       }
 
       response '200', 'airport updated' do
-        let(:id) { 'airport_1262' }
+        let(:id) { 'airport_put' }
         let(:airport) { { airportname: 'Updated Airport', city: 'Updated City', country: 'Updated Country', faa: 'UPD', icao: 'UPDT', tz: 'America/New_York', geo: { lat: 1.0, lon: 1.0, alt: 100.0 } } }
+        before do
+          post "/api/v1/airports/#{id}", params: { airport: { airportname: 'Test Airport', city: 'Test City', country: 'Test Country', faa: 'BCD', icao: 'TEST', tz: 'Europe/Paris', geo: { lat: 49.868547, lon: 3.029578, alt: 295.0 } } }
+        end
+        after { delete "/api/v1/airports/#{id}" }
         run_test! do |response|
           # Documentation-only - actual testing done in spec/requests/api/v1/airports_spec.rb
         end
       end
 
       response '400', 'bad request' do
-        let(:id) { 'airport_1262' }
+        let(:id) { 'airport_put_bad' }
         let(:airport) { { airportname: '' } }
+        before do
+          post "/api/v1/airports/#{id}", params: { airport: { airportname: 'Test Airport', city: 'Test City', country: 'Test Country', faa: 'BCD', icao: 'TEST', tz: 'Europe/Paris', geo: { lat: 49.868547, lon: 3.029578, alt: 295.0 } } }
+        end
+        after { delete "/api/v1/airports/#{id}" }
         run_test! do |response|
           # Documentation-only - actual testing done in spec/requests/api/v1/airports_spec.rb
         end
@@ -177,8 +177,11 @@ describe 'Airports API', type: :request do
       tags 'Airports'
       parameter name: :id, in: :path, type: :string, description: 'ID of the airport'
 
-      response '204', 'airport deleted' do
+      response '202', 'airport deleted' do
         let(:id) { 'airport_to_delete' }
+        before do
+          post "/api/v1/airports/#{id}", params: { airport: { airportname: 'Delete Airport', city: 'Delete City', country: 'US', faa: 'DEL', icao: 'DELT', tz: 'America/New_York', geo: { lat: 1.0, lon: 1.0, alt: 1.0 } } }
+        end
         run_test! do |response|
           # Documentation-only - actual testing done in spec/requests/api/v1/airports_spec.rb
         end

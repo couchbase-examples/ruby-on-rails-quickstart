@@ -28,6 +28,8 @@ module Api
         end
       rescue Couchbase::Error::DocumentExists => e
         render json: { error: "Airport with ID #{params[:id]} already exists", message: e.message }, status: :conflict
+      rescue ArgumentError => e
+        render json: { error: 'Invalid request', message: e.message }, status: :bad_request
       rescue StandardError => e
         render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end

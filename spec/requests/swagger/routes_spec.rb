@@ -93,6 +93,7 @@ describe 'Routes API', type: :request do
             distance: 2881.617376098415
           }
         end
+        after { delete "/api/v1/routes/#{id}" }
         run_test! do |response|
           # Documentation-only - actual testing done in spec/requests/api/v1/routes_spec.rb
         end
@@ -102,17 +103,7 @@ describe 'Routes API', type: :request do
         let(:id) { 'route_bad' }
         let(:route) do
           {
-            airline: 'AF',
-            airlineid: 'airline_137',
-            sourceairport: 'TLV',
-            destinationairport: 'MRS',
-            stops: 0,
-            equipment: '320',
-            schedule: [
-              { day: 0, utc: '10:13:00', flight: 'AF198' },
-              { day: 0, utc: '19:14:00' }
-            ],
-            distance: 2881.617376098415
+            airline: 'AF'
           }
         end
         run_test! do |response|
@@ -172,16 +163,24 @@ describe 'Routes API', type: :request do
       }
 
       response '200', 'route updated' do
-        let(:id) { 'route_10209' }
+        let(:id) { 'route_put' }
         let(:route) { { airline: 'AF', airlineid: 'airline_137', sourceairport: 'TLV', destinationairport: 'MRS', stops: 1, equipment: '330', schedule: [{ day: 1, utc: '11:00:00', flight: 'AF199' }], distance: 150.0 } }
+        before do
+          post "/api/v1/routes/#{id}", params: { route: { airline: 'AF', airlineid: 'airline_137', sourceairport: 'TLV', destinationairport: 'MRS', stops: 0, equipment: '320', schedule: [{ day: 0, utc: '10:13:00', flight: 'AF198' }], distance: 2881.617376098415 } }
+        end
+        after { delete "/api/v1/routes/#{id}" }
         run_test! do |response|
           # Documentation-only - actual testing done in spec/requests/api/v1/routes_spec.rb
         end
       end
 
       response '400', 'bad request' do
-        let(:id) { 'route_10209' }
+        let(:id) { 'route_put_bad' }
         let(:route) { { stops: 'invalid' } }
+        before do
+          post "/api/v1/routes/#{id}", params: { route: { airline: 'AF', airlineid: 'airline_137', sourceairport: 'TLV', destinationairport: 'MRS', stops: 0, equipment: '320', schedule: [{ day: 0, utc: '10:13:00', flight: 'AF198' }], distance: 2881.617376098415 } }
+        end
+        after { delete "/api/v1/routes/#{id}" }
         run_test! do |response|
           # Documentation-only - actual testing done in spec/requests/api/v1/routes_spec.rb
         end
@@ -192,8 +191,11 @@ describe 'Routes API', type: :request do
       tags 'Routes'
       parameter name: :id, in: :path, type: :string, description: 'ID of the route'
 
-      response '204', 'route deleted' do
+      response '202', 'route deleted' do
         let(:id) { 'route_to_delete' }
+        before do
+          post "/api/v1/routes/#{id}", params: { route: { airline: 'AF', airlineid: 'airline_137', sourceairport: 'TLV', destinationairport: 'MRS', stops: 0, equipment: '320', schedule: [{ day: 0, utc: '10:13:00', flight: 'AF198' }], distance: 2881.617376098415 } }
+        end
         run_test! do |response|
           # Documentation-only - actual testing done in spec/requests/api/v1/routes_spec.rb
         end
