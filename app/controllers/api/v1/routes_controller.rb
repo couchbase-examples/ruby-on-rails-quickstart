@@ -24,8 +24,6 @@ module Api
         end
       rescue Couchbase::Error::DocumentExists => e
         render json: { error: 'Route already exists', message: e.message }, status: :conflict
-      rescue StandardError => e
-        render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
 
       # PUT /api/v1/routes/{id}
@@ -34,8 +32,6 @@ module Api
         render json: @route, status: :ok
       rescue ArgumentError => e
         render json: { error: 'Invalid request', message: e.message }, status: :bad_request
-      rescue StandardError => e
-        render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
 
       # DELETE /api/v1/routes/{id}
@@ -51,8 +47,6 @@ module Api
         end
       rescue Couchbase::Error::DocumentNotFound => e
         render json: { error: 'Route not found', message: e.message }, status: :not_found
-      rescue StandardError => e
-        render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
 
       private

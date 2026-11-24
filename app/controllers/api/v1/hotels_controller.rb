@@ -8,8 +8,6 @@ module Api
             def search
                 @hotels = Hotel.search_name(params[:name])
                 render json: @hotels, status: :ok
-            rescue StandardError => e
-                render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
             end
 
             # GET /api/v1/hotels/filter
@@ -25,8 +23,6 @@ module Api
                   }
                 ), hotel_params[:offset],  hotel_params[:limit])
                 render json: @hotels, status: :ok
-            rescue StandardError => e
-                render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
             end
 
             def hotel_params
