@@ -14,8 +14,6 @@ module Api
         end
       rescue Couchbase::Error::DocumentNotFound => e
         render json: { error: "Airline with ID #{params[:id]} not found", message: e.message }, status: :not_found
-      rescue StandardError => e
-        render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
 
       # POST /api/v1/airlines/{id}
@@ -30,8 +28,6 @@ module Api
         render json: { error: 'Invalid request', message: e.message }, status: :bad_request
       rescue Couchbase::Error::DocumentExists => e
         render json: { error: "Airline with ID #{params[:id]} already exists", message: e.message }, status: :conflict
-      rescue StandardError => e
-        render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
 
       # PUT /api/v1/airlines/{id}
@@ -40,8 +36,6 @@ module Api
         render json: @airline, status: :ok
       rescue ArgumentError => e
         render json: { error: 'Invalid request', message: e.message }, status: :bad_request
-      rescue StandardError => e
-        render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
 
       # DELETE /api/v1/airlines/{id}
@@ -57,8 +51,6 @@ module Api
         end
       rescue Couchbase::Error::DocumentNotFound => e
         render json: { error: "Airline with ID #{params[:id]} not found", message: e.message }, status: :not_found
-      rescue StandardError => e
-        render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
 
       # GET /api/v1/airlines/list
@@ -74,8 +66,6 @@ module Api
         else
           render json: @airlines, status: :ok
         end
-      rescue StandardError => e
-        render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
 
       # GET /api/v1/airlines/to-airport
@@ -90,8 +80,6 @@ module Api
           @airlines = Airline.to_airport(destination_airport_code, limit, offset)
           render json: @airlines, status: :ok
         end
-      rescue StandardError => e
-        render json: { error: 'Internal server error', message: e.message }, status: :internal_server_error
       end
 
       private
